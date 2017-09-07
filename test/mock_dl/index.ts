@@ -6,7 +6,12 @@ import bodyParser = require('body-parser');
 import * as path from 'path';
 import * as fs from 'fs';
 
+const multer = require('multer');
+const upload_path = path.join(__dirname, '../uploads/');
+const multer_upload = multer({ dest: upload_path }).any();
+
 const config = require('../mock_dl/server_config.json') as { bot: dl.User, port: number, widthTests: { [id: string]: number } };
+const uploads_url = "http://localhost:" + config.port + "/uploads/";
 const app = express();
 
 app.use(bodyParser.json()); // for parsing application/json
@@ -197,7 +202,7 @@ app.post('/mock/conversations/:conversationId/upload', (req, res) => {
     const token = get_token(req);
     const [test, area, count] = token.split("/");
     if (test === 'works' || area !== 'upload' || !count || ++counter < Number(count))
-        upload(req, res);
+        echo_uploads(req, res);
     else switch (test) {
         case 'timeout':
             setTimeout(() => upload(req, res), timeout);
@@ -217,6 +222,51 @@ const upload = (req: express.Request, res: express.Response) => {
     res.send({
         id,
         timestamp: new Date().toUTCString()
+    });
+}
+
+const echo_uploads = (req: express.Request, res: express.Response) => {
+    // multer upload
+    multer_upload(req, res, function (err) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        // sending watermark msg for Web Chat upload success
+        upload(req, res);
+
+        const uploaded_files = [];
+        for (var i = 0; i < req["files"].length; i++) {
+            uploaded_files.push(
+                <dl.UnknownMedia>{
+                    contentType: req["files"][i].mimetype,
+                    contentUrl: uploads_url + req["files"][i].filename,
+                    name: req["files"][i].originalname
+                });
+        }
+
+        // echo files
+        sendActivity(res, {
+            type: "message",
+            from: config.bot,
+            timestamp: new Date().toUTCString(),
+            channelId: "webchat",
+            text: "",
+            attachments: uploaded_files.slice(1)           // skipping first one: contains DL activity data (not an attachment)
+        });
+
+        // deleting files
+        setTimeout(() => {
+            for (var i = 0; i < req["files"].length; i++) {
+                console.log("deleting file: " + upload_path + req["files"][i].filename);
+                if (fs.existsSync(upload_path + req["files"][i].filename)) {
+                    fs.unlinkSync(upload_path + req["files"][i].filename);
+                }
+            }
+        }, 2000);
+
+        return;
     });
 }
 
@@ -291,10 +341,8 @@ app.get('/botchat-fullwindow.css', function (req, res) {
 app.get('/mock_speech.js', function (req, res) {
     res.sendFile(path.join(__dirname + "/../mock_speech/index.js"));
 });
-app.get('/assets/:file', function (req, res) {
-    const file = req.params["file"];
-    res.sendFile(path.join(__dirname + "/../assets/" + file));
-});
+app.use('/assets', express.static(path.join(__dirname, '../assets')));
+app.use('/uploads', express.static(upload_path));
 
 //do not listen unless being called from the command line
 if (!module.parent) {

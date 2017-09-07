@@ -22,3 +22,4 @@ botchat.js.map
 CognitiveServices.js
 CognitiveServices.js.map
 *.css
+/test/uploads
