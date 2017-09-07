@@ -50,10 +50,10 @@ const sendStatus = (res: express.Response, code: string) => {
 
 app.post('/mock/tokens/generate', (req, res) => {
     const token = get_token(req);
+    const conversationId = Conversations.createConversation();
 
     res.send({
-        // We don't have a working mock on token generate/refresh yet
-        conversationId: 'DUMMY',
+        conversationId,
         token,
         expires_in,
         timestamp: new Date().toUTCString(),
@@ -62,10 +62,10 @@ app.post('/mock/tokens/generate', (req, res) => {
 
 app.post('/mock/tokens/refresh', (req, res) => {
     const token = get_token(req);
+    const conversationId = Conversations.createConversation();
 
     res.send({
-        // We don't have a working mock on token generate/refresh yet
-        conversationId: 'DUMMY',
+        conversationId,
         token,
         expires_in,
         timestamp: new Date().toUTCString()
