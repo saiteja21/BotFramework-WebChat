@@ -175,7 +175,7 @@ export const AttachmentView = (props: {
     );
 
     switch (attachment.contentType) {
-        case "application/vnd.microsoft.card.hero":
+        case 'application/vnd.microsoft.card.hero':
             return (
                 adaptiveCardJSON &&
                     <AdaptiveCardContainer
@@ -187,7 +187,7 @@ export const AttachmentView = (props: {
                     />
             );
 
-        case "application/vnd.microsoft.card.thumbnail":
+        case 'application/vnd.microsoft.card.thumbnail':
             return (
                 adaptiveCardJSON &&
                     <AdaptiveCardContainer
@@ -199,7 +199,7 @@ export const AttachmentView = (props: {
                     />
             );
 
-        case "application/vnd.microsoft.card.video":
+        case 'application/vnd.microsoft.card.video':
             return (
                 adaptiveCardJSON &&
                     <AdaptiveCardContainer
@@ -219,7 +219,7 @@ export const AttachmentView = (props: {
             );
 
 
-        case "application/vnd.microsoft.card.animation":
+        case 'application/vnd.microsoft.card.animation':
             return (
                 adaptiveCardJSON &&
                     <AdaptiveCardContainer
@@ -238,7 +238,7 @@ export const AttachmentView = (props: {
                     </AdaptiveCardContainer>
             );
 
-        case "application/vnd.microsoft.card.audio":
+        case 'application/vnd.microsoft.card.audio':
             return (
                 adaptiveCardJSON &&
                     <AdaptiveCardContainer
@@ -255,7 +255,7 @@ export const AttachmentView = (props: {
                     </AdaptiveCardContainer>
             );
 
-        case "application/vnd.microsoft.card.signin":
+        case 'application/vnd.microsoft.card.signin':
             return (
                 adaptiveCardJSON &&
                     <AdaptiveCardContainer
@@ -265,7 +265,7 @@ export const AttachmentView = (props: {
                     />
             );
 
-        case "application/vnd.microsoft.card.receipt":
+        case 'application/vnd.microsoft.card.receipt':
             return (
                 adaptiveCardJSON &&
                     <AdaptiveCardContainer
@@ -276,7 +276,7 @@ export const AttachmentView = (props: {
                     />
             );
 
-        case "application/vnd.microsoft.card.adaptive":
+        case 'application/vnd.microsoft.card.adaptive':
             return (
                 !!attachment.content &&
                     <AdaptiveCardContainer
@@ -287,7 +287,7 @@ export const AttachmentView = (props: {
             );
 
         // Deprecated format for Skype channels. For testing legacy bots in Emulator only.
-        case "application/vnd.microsoft.card.flex":
+        case 'application/vnd.microsoft.card.flex':
             return (
                 adaptiveCardJSON &&
                     <AdaptiveCardContainer
@@ -299,22 +299,29 @@ export const AttachmentView = (props: {
                     </AdaptiveCardContainer>
             );
 
-        case "image/png":
-        case "image/jpg":
-        case "image/jpeg":
-        case "image/gif":
+        case 'image/png':
+        case 'image/jpg':
+        case 'image/jpeg':
+        case 'image/gif':
             return <Media src={ attachment.contentUrl } onLoad={ props.onImageLoad } />;
 
-        case "audio/mpeg":
-        case "audio/mp4":
+        case 'audio/mpeg':
+        case 'audio/mp4':
             return <Media type="audio" src={ attachment.contentUrl } />;
 
-        case "video/mp4":
+        case 'video/mp4':
             return <Media type="video" poster={ attachment.thumbnailUrl } src={ attachment.contentUrl } onLoad={ props.onImageLoad } />;
-
-        default:
-            const unknownAttachment = props.attachment as UnknownMedia;
-
-            return <Unknown format={ props.format } contentType={ unknownAttachment.contentType } contentUrl={ unknownAttachment.contentUrl } name={ unknownAttachment.name } />;
     }
+
+    // If attachment of unknown content type or parse failed, fallback to unknown attachment card
+    const unknownAttachment = props.attachment as UnknownMedia;
+
+    return (
+        <Unknown
+            contentType={ unknownAttachment.contentType }
+            contentUrl={ unknownAttachment.contentUrl }
+            format={ props.format }
+            name={ unknownAttachment.name }
+        />
+    );
 }
