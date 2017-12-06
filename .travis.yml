@@ -5,4 +5,5 @@ install:
   - npm install
 script:
 deploy:
-  - node_modules/.bin/gulp prdeploy
+  provider: script
+  script: node_modules/.bin/gulp prdeploy
