@@ -1,4 +1,8 @@
 language: node_js
 node_js:
-  - "6"
-  
+  - "8"
+install:
+  - npm install
+script:
+deploy:
+  - node_modules/.bin/gulp prdeploy
