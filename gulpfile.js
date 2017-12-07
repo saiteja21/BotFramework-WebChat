@@ -9,6 +9,12 @@ const rename       = require('gulp-rename');
 const BLOB_CONTAINER      = `pr-${ process.env.TRAVIS_PULL_REQUEST }`;
 const TESTBED_GIT_CONTEXT = 'fiddler/testbed';
 
+const UPLOAD_OPTIONS = {
+  account  : process.env.AZURE_STORAGE_ACCOUNT,
+  container: BLOB_CONTAINER,
+  key      : process.env.AZURE_STORAGE_ACCESS_KEY
+};
+
 gulp.task('prdeploy:createcontainer', () => {
   return new Promise((resolve, reject) => {
     const blobService = azureStorage.createBlobService();
@@ -25,11 +31,7 @@ gulp.task('prdeploy:upload:asset', ['prdeploy:createcontainer', 'prdeploy:presta
     .pipe(rename(path => {
       path.basename = 'index';
     }))
-    .pipe(upload({
-      account  : process.env.AZURE_STORAGE_ACCOUNT,
-      container: BLOB_CONTAINER,
-      key      : process.env.AZURE_STORAGE_ACCESS_KEY
-    }));
+    .pipe(upload(UPLOAD_OPTIONS));
 });
 
 gulp.task('prdeploy:upload:dist', ['prdeploy:createcontainer', 'prdeploy:prestatus'], () => {
@@ -37,11 +39,7 @@ gulp.task('prdeploy:upload:dist', ['prdeploy:createcontainer', 'prdeploy:prestat
 
   return gulp
     .src(packageJSON.files.map(file => /\/$/.test(file) ? `${ file }**/*` : file), { base: __dirname })
-    .pipe(upload({
-      account  : process.env.AZURE_STORAGE_ACCOUNT,
-      container: BLOB_CONTAINER,
-      key      : process.env.AZURE_STORAGE_ACCESS_KEY
-    }));
+    .pipe(upload(UPLOAD_OPTIONS));
 });
 
 gulp.task('prdeploy:upload:mock_speech', ['prdeploy:createcontainer', 'prdeploy:prestatus'], () => {
@@ -50,11 +48,7 @@ gulp.task('prdeploy:upload:mock_speech', ['prdeploy:createcontainer', 'prdeploy:
     .pipe(rename(path => {
       path.basename = 'mock_speech';
     }))
-    .pipe(upload({
-      account  : process.env.AZURE_STORAGE_ACCOUNT,
-      container: BLOB_CONTAINER,
-      key      : process.env.AZURE_STORAGE_ACCESS_KEY
-    }));
+    .pipe(upload(UPLOAD_OPTIONS));
 });
 
 gulp.task('prdeploy:upload', ['prdeploy:upload:asset', 'prdeploy:upload:dist', 'prdeploy:upload:mock_speech']);
@@ -62,23 +56,29 @@ gulp.task('prdeploy:upload', ['prdeploy:upload:asset', 'prdeploy:upload:dist', '
 gulp.task('prdeploy:prestatus', () => {
   return gitStatus({
     description: 'Deploying a testbed',
-    state: 'pending'
+    state      : 'pending'
   });
 });
 
 gulp.task('prdeploy:poststatus', ['prdeploy:upload'], () => {
   return gitStatus({
-    description: 'Testbed is deployed',
+    description: 'Testbed deployed',
     state      : 'success',
     target_url : `https://${ encodeURI(process.env.AZURE_STORAGE_ACCOUNT) }.blob.core.windows.net/${ encodeURI(BLOB_CONTAINER) }/index.html?domain=https://webchat-testbed-mock.azurewebsites.net/mock`
   });
 });
 
-gulp.task('prdeploy', process.env.TRAVIS_PULL_REQUEST ? ['prdeploy:prestatus', 'prdeploy:upload', 'prdeploy:poststatus'] : []);
+gulp.task(
+  'prdeploy',
+  process.env.TRAVIS_PULL_REQUEST && process.env.TRAVIS_PULL_REQUEST !== 'false' ?
+    ['prdeploy:prestatus', 'prdeploy:upload', 'prdeploy:poststatus']
+  :
+    []
+);
 
 function gitStatus(status) {
   return fetch(
-    `https://api.github.com/repos/${ process.env.TRAVIS_PULL_REQUEST_SLUG }/statuses/${ encodeURI(process.env.TRAVIS_PULL_REQUEST_SHA) }`,
+    `https://api.github.com/repos/${ encodeURI(process.env.TRAVIS_PULL_REQUEST_SLUG) }/statuses/${ encodeURI(process.env.TRAVIS_PULL_REQUEST_SHA) }`,
     {
       body  : JSON.stringify(Object.assign({ context: TESTBED_GIT_CONTEXT }, status)),
       method: 'post',
