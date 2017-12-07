@@ -5,5 +5,5 @@ install:
   - npm install
 script:
   - npm run prepublish
-after_script:
+after_success:
   - node_modules/.bin/gulp prdeploy
