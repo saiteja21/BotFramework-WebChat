@@ -71,7 +71,7 @@ gulp.task('prdeploy:poststatus', ['prdeploy:upload'], () => {
   });
 });
 
-gulp.task('prdeploy', ['prdeploy:prestatus', 'prdeploy:upload', 'prdeploy:poststatus']);
+gulp.task('prdeploy', process.env.TRAVIS_PULL_REQUEST ? ['prdeploy:prestatus', 'prdeploy:upload', 'prdeploy:poststatus'] : []);
 
 function gitStatus(status) {
   return fetch(
