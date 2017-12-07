@@ -21,7 +21,10 @@ gulp.task('prdeploy:createcontainer', () => {
 
 gulp.task('prdeploy:upload:asset', ['prdeploy:createcontainer', 'prdeploy:prestatus'], () => {
   return gulp
-    .src('prdeploy/**/*')
+    .src('test/test.html')
+    .pipe(rename(path => {
+      path.basename = 'index';
+    }))
     .pipe(upload({
       account  : process.env.AZURE_STORAGE_ACCOUNT,
       container: BLOB_CONTAINER,
@@ -67,7 +70,7 @@ gulp.task('prdeploy:poststatus', ['prdeploy:upload'], () => {
   return gitStatus({
     description: 'Testbed is deployed',
     state      : 'success',
-    target_url : `https://${ encodeURI(process.env.AZURE_STORAGE_ACCOUNT) }.blob.core.windows.net/${ encodeURI(BLOB_CONTAINER) }/index.html`
+    target_url : `https://${ encodeURI(process.env.AZURE_STORAGE_ACCOUNT) }.blob.core.windows.net/${ encodeURI(BLOB_CONTAINER) }/index.html?domain=https://webchat-testbed-mock.azurewebsites.net/mock`
   });
 });
 
