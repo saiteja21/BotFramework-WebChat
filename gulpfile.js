@@ -64,7 +64,7 @@ gulp.task('prdeploy:poststatus', ['prdeploy:upload'], () => {
   return gitStatus({
     description: 'Testbed deployed',
     state      : 'success',
-    target_url : `https://${ encodeURI(process.env.AZURE_STORAGE_ACCOUNT) }.blob.core.windows.net/${ encodeURI(BLOB_CONTAINER) }/index.html?domain=https://webchat-testbed-mock.azurewebsites.net/mock`
+    target_url : `https://${ encodeURI(process.env.AZURE_STORAGE_ACCOUNT) }.blob.core.windows.net/${ encodeURI(BLOB_CONTAINER) }/index.html?domain=https://webchatmockdl.azurewebsites.net/mock`
   });
 });
 
