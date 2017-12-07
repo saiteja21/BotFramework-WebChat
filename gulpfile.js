@@ -1,14 +1,25 @@
 require('dotenv').config();
 
-const { upload } = require('gulp-azure-storage');
-const fetch      = require('node-fetch');
-const gulp       = require('gulp');
-const rename     = require('gulp-rename');
+const { upload }   = require('gulp-azure-storage');
+const azureStorage = require('azure-storage');
+const fetch        = require('node-fetch');
+const gulp         = require('gulp');
+const rename       = require('gulp-rename');
 
 const BLOB_CONTAINER      = `pr-${ process.env.TRAVIS_PULL_REQUEST }`;
 const TESTBED_GIT_CONTEXT = 'fiddler/testbed';
 
-gulp.task('prdeploy:upload:asset', ['prdeploy:prestatus'], () => {
+gulp.task('prdeploy:createcontainer', () => {
+  return new Promise((resolve, reject) => {
+    const blobService = azureStorage.createBlobService();
+
+    blobService.createContainerIfNotExists(BLOB_CONTAINER, { publicAccessLevel: 'blob' }, err => {
+      err ? reject(err) : resolve();
+    });
+  });
+});
+
+gulp.task('prdeploy:upload:asset', ['prdeploy:createcontainer', 'prdeploy:prestatus'], () => {
   return gulp
     .src('prdeploy/**/*')
     .pipe(upload({
@@ -18,7 +29,7 @@ gulp.task('prdeploy:upload:asset', ['prdeploy:prestatus'], () => {
     }));
 });
 
-gulp.task('prdeploy:upload:dist', ['prdeploy:prestatus'], () => {
+gulp.task('prdeploy:upload:dist', ['prdeploy:createcontainer', 'prdeploy:prestatus'], () => {
   const packageJSON = require('./package.json');
 
   return gulp
@@ -30,7 +41,7 @@ gulp.task('prdeploy:upload:dist', ['prdeploy:prestatus'], () => {
     }));
 });
 
-gulp.task('prdeploy:upload:mock_speech', ['prdeploy:prestatus'], () => {
+gulp.task('prdeploy:upload:mock_speech', ['prdeploy:createcontainer', 'prdeploy:prestatus'], () => {
   return gulp
     .src('test/mock_speech/index.js*')
     .pipe(rename(path => {
