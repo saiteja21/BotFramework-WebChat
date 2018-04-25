@@ -16,7 +16,8 @@ export interface ICognitiveServicesSpeechRecognizerProperties {
     locale?: string,
     subscriptionKey?: string,
     fetchCallback?: (authFetchEventId: string) => Promise<string>,
-    fetchOnExpiryCallback?: (authFetchEventId: string) => Promise<string>
+    fetchOnExpiryCallback?: (authFetchEventId: string) => Promise<string>,
+    speechContextExtra?: any
 }
 
 export class SpeechRecognizer implements Speech.ISpeechRecognizer {
@@ -133,7 +134,13 @@ export class SpeechRecognizer implements Speech.ISpeechRecognizer {
             }
         }
 
-        const speechContext: ISpeechContext = { dgi: { Groups: [] } };
+        const speechContext: ISpeechContext = { ...this.properties.speechContextExtra };
+
+        if (!speechContext.dgi) {
+            speechContext.dgi = { Groups: [] };
+        } else if (!Array.isArray(speechContext.dgi.Groups)) {
+            speechContext.dgi.Groups = [];
+        }
 
         if (this.referenceGrammarId) {
             speechContext.dgi.Groups.push({
