@@ -1,5 +1,5 @@
 import * as dl from "./node_modules/botframework-directlinejs/built/directLine";
-export const config = require('./mock_dl/server_config.json') as { bot: dl.User, port: number, widthTests: { [id: string]: number } };
+import config from './config';
 const local_url = "http://localhost:" + config.port + "/";
 const asset_url = local_url + "assets/";
 const bot = config.bot;

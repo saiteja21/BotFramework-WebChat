@@ -12,6 +12,7 @@ test/mock_dl/conversations.js*
 test/mock_dl/index.js*
 test/mock_speech/index.js*
 test/commands_map.js*
+test/config.js*
 test/server_content.js*
 test/interfaces_sdk.js*
 npm

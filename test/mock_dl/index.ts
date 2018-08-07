@@ -6,13 +6,13 @@ import * as bodyParser from 'body-parser';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as Conversations from './conversations';
+import config from '../config';
 
 const cors = require('cors');
 const multer = require('multer');
 const upload_path = path.join(__dirname, '../uploads/');
 const multer_upload = multer({ dest: upload_path }).any();
 
-const config = require('../mock_dl/server_config.json') as { bot: dl.User, port: number, widthTests: { [id: string]: number } };
 const uploads_url = "http://localhost:" + config.port + "/uploads/";
 const app = express();
 
