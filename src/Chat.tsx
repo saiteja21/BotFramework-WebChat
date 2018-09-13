@@ -5,7 +5,9 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { Activity, CardActionTypes, DirectLine, DirectLineOptions, IBotConnection, User } from 'botframework-directlinejs';
+// UNDO
+// import { Activity, CardActionTypes, DirectLine, DirectLineOptions, IBotConnection, User } from 'botframework-directlinejs';
+import { Activity, CardActionTypes, DirectLine, DirectLineOptions, IBotConnection, User } from './directLine';
 import { Provider } from 'react-redux';
 import { getTabIndex } from './getTabIndex';
 import * as konsole from './Konsole';

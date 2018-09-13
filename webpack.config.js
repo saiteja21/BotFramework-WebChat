@@ -39,13 +39,14 @@ const coreConfig = {
     module: {
         rules: [
             // All files with '.ts' or '.tsx' will first be handle by 'tslint-loader'
-            {
-                test: /\.tsx?$/,
-                enforce: 'pre',
-                loader: 'tslint-loader',
-                exclude: /node_modules/,
-                options: tsLintOptions
-            },
+            // UNDO
+            // {
+            //     test: /\.tsx?$/,
+            //     enforce: 'pre',
+            //     loader: 'tslint-loader',
+            //     exclude: /node_modules/,
+            //     options: tsLintOptions
+            // },
             // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
             {
                 test: /\.tsx?$/,

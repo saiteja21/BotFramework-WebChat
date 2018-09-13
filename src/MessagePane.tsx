@@ -1,4 +1,6 @@
-import { Activity, CardAction, Message, User } from 'botframework-directlinejs';
+// UNDO
+// import { Activity, CardAction, Message, User } from 'botframework-directlinejs';
+import { Activity, CardAction, Message, User } from './directLine';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { activityWithSuggestedActions } from './activityWithSuggestedActions';

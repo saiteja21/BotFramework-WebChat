@@ -1,5 +1,7 @@
 import { HorizontalAlignment, IAdaptiveCard, TextSize, TextWeight } from 'adaptivecards';
-import { Attachment, CardAction, CardImage, KnownMedia, UnknownMedia } from 'botframework-directlinejs';
+// UNDO
+// import { Attachment, CardAction, CardImage, KnownMedia, UnknownMedia } from 'botframework-directlinejs';
+import { Attachment, CardAction, CardImage, KnownMedia, UnknownMedia } from './directLine';
 import * as React from 'react';
 import { default as AdaptiveCardContainer } from './AdaptiveCardContainer';
 import * as CardBuilder from './CardBuilder';

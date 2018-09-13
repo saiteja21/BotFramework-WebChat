@@ -1,4 +1,6 @@
-import { Attachment } from 'botframework-directlinejs';
+// UNDO
+// import { Attachment } from 'botframework-directlinejs';
+import { Attachment } from './directLine';
 import * as React from 'react';
 import { AttachmentView } from './Attachment';
 import { IDoCardAction } from './Chat';

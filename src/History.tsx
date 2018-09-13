@@ -1,4 +1,6 @@
-import { Activity, CardActionTypes, Message, User } from 'botframework-directlinejs';
+// UNDO
+// import { Activity, CardActionTypes, Message, User } from 'botframework-directlinejs';
+import { Activity, CardActionTypes, Message, User } from './directLine';
 import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
 import { ActivityView } from './ActivityView';

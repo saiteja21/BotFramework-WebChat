@@ -1,4 +1,6 @@
-import { Activity, Message } from 'botframework-directlinejs';
+// UNDO
+// import { Activity, Message } from 'botframework-directlinejs';
+import { Activity, Message } from './directLine';
 
 export function activityWithSuggestedActions(activities: Activity[]) {
     if (!activities || activities.length === 0) {

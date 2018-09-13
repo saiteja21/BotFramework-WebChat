@@ -1,4 +1,6 @@
-import { Activity, Attachment, AttachmentLayout } from 'botframework-directlinejs';
+// UNDO
+// import { Activity, Attachment, AttachmentLayout } from 'botframework-directlinejs';
+import { Activity, Attachment, AttachmentLayout } from './directLine';
 import * as React from 'react';
 import { AttachmentView } from './Attachment';
 import { Carousel } from './Carousel';

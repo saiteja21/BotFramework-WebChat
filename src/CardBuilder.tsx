@@ -1,5 +1,7 @@
 import { AdaptiveCard, CardElement, Column, ColumnSet, Container, Image, OpenUrlAction, Size, SubmitAction, TextBlock, TextSize, TextWeight } from 'adaptivecards';
-import { Attachment, CardAction, CardImage, HeroCard, Thumbnail } from 'botframework-directlinejs';
+// UNDO
+// import { Attachment, CardAction, CardImage, HeroCard, Thumbnail } from 'botframework-directlinejs';
+import { Attachment, CardAction, CardImage, HeroCard, Thumbnail } from './directLine';
 import { BotFrameworkCardAction } from './AdaptiveCardContainer';
 
 export class AdaptiveCardBuilder {

@@ -1,5 +1,7 @@
 import { HostConfig } from 'adaptivecards';
-import { Activity, ConnectionStatus, IBotConnection, Media, MediaType, Message, User } from 'botframework-directlinejs';
+// UNDO
+// import { Activity, ConnectionStatus, IBotConnection, Media, MediaType, Message, User } from 'botframework-directlinejs';
+import { Activity, ConnectionStatus, IBotConnection, Media, MediaType, Message, User } from './directLine';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as konsole from './Konsole';
 import { Speech } from './SpeechModule';
