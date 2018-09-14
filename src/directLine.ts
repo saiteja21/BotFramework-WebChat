@@ -600,37 +600,52 @@ export class DirectLine implements IBotConnection {
     }
 
     private pollingGetActivity$() {
+        // Skip if the last request is still pending
+        // TODO: We should write it in a better way so the timer is fire immediately after the connection become available
+        let shouldSkip = false;
+
         return Observable.interval(this.pollingInterval)
         .combineLatest(this.checkConnection())
-        .mergeMap(_ =>
-            Observable.ajax({
-                method: "GET",
-                url: `${this.domain}/conversations/${this.conversationId}/activities?watermark=${this.watermark}`,
-                timeout,
-                headers: {
-                    "Accept": "application/json",
-                    "Authorization": `Bearer ${this.token}`
-                }
-            })
-            .catch(error => {
-                if (error.status === 403) {
-                    // This is slightly ugly. We want to update this.connectionStatus$ to ExpiredToken so that subsequent
-                    // calls to checkConnection will throw an error. But when we do so, it causes this.checkConnection()
-                    // to immediately throw an error, which is caught by the catch() below and transformed into an empty
-                    // object. Then next() returns, and we emit an empty object. Which means one 403 is causing
-                    // two empty objects to be emitted. Which is harmless but, again, slightly ugly.
-                    this.expiredToken();
-                } else if (error.status === 404) {
-                    return Observable.throw(errorConversationEnded);
-                }
+        .mergeMap(() => {
+            if (shouldSkip) {
+                return Observable.empty<Activity>();
+            } else {
+                shouldSkip = true;
 
-                return Observable.empty<AjaxResponse>();
-            })
-//          .do(ajaxResponse => konsole.log("getActivityGroup ajaxResponse", ajaxResponse))
-            .map(ajaxResponse => ajaxResponse.response as ActivityGroup)
-            .mergeMap(activityGroup => this.observableFromActivityGroup(activityGroup))
-        )
-        .catch(error => Observable.empty<Activity>());
+                return Observable.ajax({
+                    method: "GET",
+                    url: `${this.domain}/conversations/${this.conversationId}/activities?watermark=${this.watermark}`,
+                    timeout,
+                    headers: {
+                        "Accept": "application/json",
+                        "Authorization": `Bearer ${this.token}`
+                    }
+                })
+                .do(() => {
+                    shouldSkip = false;
+                }, () => {
+                    shouldSkip = false;
+                })
+                .catch(error => {
+                    if (error.status === 403) {
+                        // This is slightly ugly. We want to update this.connectionStatus$ to ExpiredToken so that subsequent
+                        // calls to checkConnection will throw an error. But when we do so, it causes this.checkConnection()
+                        // to immediately throw an error, which is caught by the catch() below and transformed into an empty
+                        // object. Then next() returns, and we emit an empty object. Which means one 403 is causing
+                        // two empty objects to be emitted. Which is harmless but, again, slightly ugly.
+                        this.expiredToken();
+                    } else if (error.status === 404) {
+                        return Observable.throw(errorConversationEnded);
+                    }
+
+                    return Observable.empty<AjaxResponse>();
+                })
+    //          .do(ajaxResponse => konsole.log("getActivityGroup ajaxResponse", ajaxResponse))
+                .map(ajaxResponse => ajaxResponse.response as ActivityGroup)
+                .mergeMap(activityGroup => this.observableFromActivityGroup(activityGroup))
+            }
+        })
+        .catch(() => Observable.empty<Activity>());
     }
 
     private observableFromActivityGroup(activityGroup: ActivityGroup) {
