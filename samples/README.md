@@ -63,6 +63,7 @@ To add, decorate, replace, or remove activity or attachment, these samples will 
 On your web site, instead of connecting to your backend thru REST/Web Socket API, you can also connect thru Direct Line activities. This gives you flexibility of delivering content to your users.
 
 - [Pipe activities to Redux as actions](https://microsoft.github.io/BotFramework-WebChat/redux-activity-middleware/build) [(source)](https://github.com/Microsoft/BotFramework-WebChat/tree/preview/samples/redux-activity-middleware)
+- [Send join event on connect](https://microsoft.github.io/BotFramework-WebChat/send-join-event/build) [(source)](https://github.com/Microsoft/BotFramework-WebChat/tree/preview/samples/send-join-event
 
 ## Timestamps
 
