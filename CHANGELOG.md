@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Fix [#1383](https://github.com/Microsoft/BotFramework-WebChat/issues/1383). Added options to hide upload button, by [@compulim](https://github.com/compulim) in PR [#1491](https://github.com/Microsoft/BotFramework-WebChat/pull/1491)
 - Added support of avatar image, thru `styleOptions.botAvatarImage` and `styleOptions.userAvatarImage`, in PR [#1486](https://github.com/Microsoft/BotFramework-WebChat/pull/1486)
+- Core: Added `sendEvent`, in PR [#1286](https://github.com/Microsoft/BotFramework-WebChat/pull/1286)
+- Core: Added `CONNECT_FULFILLING` action to workaround `redux-saga` [design decision](https://github.com/redux-saga/redux-saga/issues/1651), in PR [#1286](https://github.com/Microsoft/BotFramework-WebChat/pull/1286)
 
 ### Changed
 - Moved `botAvatarImage` and `userAvatarImage` to `styleOptions.botAvatarImage` and `styleOptions.userAvatarImage` respectively, in PR [#1486](https://github.com/Microsoft/BotFramework-WebChat/pull/1486)
@@ -26,6 +28,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix [#1409](https://github.com/Microsoft/BotFramework-WebChat/issues/1409). Added microphone status as screen reader only text, by [@corinagum](https://github.com/corinagum) in PR [#1490](https://github.com/Microsoft/BotFramework-WebChat/pull/1490)
 - Fix [#1605](https://github.com/Microsoft/BotFramework-WebChat/issues/1305), [#1316](https://github.com/Microsoft/BotFramework-WebChat/issues/1316), [#1341](https://github.com/Microsoft/BotFramework-WebChat/issues/1341), [#1411](https://github.com/Microsoft/BotFramework-WebChat/issues/1411). Fix color contrast ratios & downloadIcon narrator accessibility by [@corinagum](https://github.com/corinagum) in PR [#1494](https://github.com/Microsoft/BotFramework-WebChat/pull/1494)
 - Fix [#1264](https://github.com/Microsoft/BotFramework-WebChat/issues/1264), [#1308](https://github.com/Microsoft/BotFramework-WebChat/issues/1308), [#1318](https://github.com/Microsoft/BotFramework-WebChat/issues/1318), [#1334](https://github.com/Microsoft/BotFramework-WebChat/issues/1334),[#1425](https://github.com/Microsoft/BotFramework-WebChat/issues/1425). Update icons with accessibilty, Sent message accessibility, and fix sample README.md,  [@corinagum](https://github.com/corinagum) in PR [#1506](https://github.com/Microsoft/BotFramework-WebChat/pull/1506)
+- Core: Some sagas missed handling successive actions, in PR [#1286](https://github.com/Microsoft/BotFramework-WebChat/pull/1286)
+   - `sendFilesToPostActivitySaga`
+   - `sendMessageToPostActivitySaga`
+   - `sendPostBackToPostActivitySaga`
+   - `stopSpeakActivityOnInputSaga`
+- Core: `incomingActivitySaga` may null-ref if the first activity is from user, in PR [#1286](https://github.com/Microsoft/BotFramework-WebChat/pull/1286)
 
 ### Removed
 - `botAvatarImage` and `userAvatarImage` props, as they are moved inside `styleOptions`, in PR [#1486](https://github.com/Microsoft/BotFramework-WebChat/pull/1486)
@@ -33,6 +41,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Samples
 - UI: [Hide upload button](https://microsoft.github.io/BotFramework-WebChat/05.d.hide-upload-button-styling/), in [#1491](https://github.com/Microsoft/BotFramework-WebChat/pull/1491)
 - UI: [Avatar image](https://microsoft.github.io/BotFramework-WebChat/04.b.display-user-bot-images-styling/), in [#1486](https://github.com/Microsoft/BotFramework-WebChat/pull/1486)
+- Backchannel: New send join event sample, in PR [#1286](https://github.com/Microsoft/BotFramework-WebChat/pull/1286)
 
 ## [4.2.0] - 2018-12-11
 ### Added
