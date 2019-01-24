@@ -1,7 +1,8 @@
 import { put } from 'redux-saga/effects';
-import whileConnected from './effects/whileConnected';
 
 import postActivity from '../actions/postActivity';
+
+import whileConnected from './effects/whileConnected';
 
 export default function* () {
   yield whileConnected(sendConversationUpdateOnConnect);
