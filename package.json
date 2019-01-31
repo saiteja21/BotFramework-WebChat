@@ -4,6 +4,9 @@
   "description": "Embeddable web chat control for the Microsoft Bot Framework",
   "main": "built/BotChat.js",
   "types": "built/BotChat.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build-test": "tsc -p ./test/mock_dl && tsc -p ./test && tsc -p ./test/mock_speech",
     "build-test-watch": "concurrently \"tsc -w -p ./test/mock_dl\" \"tsc -w -p ./test\"",
