@@ -3,7 +3,7 @@ import {
   FunctionContext as ScrollToBottomFunctionContext
 } from 'react-scroll-to-bottom';
 
-import { connect } from 'react-redux';
+import { connect, Provider } from 'react-redux';
 import { css } from 'glamor';
 import memoize from 'memoize-one';
 import PropTypes from 'prop-types';
@@ -42,6 +42,7 @@ import Dictation from './Dictation';
 import mapMap from './Utils/mapMap';
 import observableToPromise from './Utils/observableToPromise';
 import shallowEquals from './Utils/shallowEquals';
+import StoreContext from './StoreContext';
 
 // Flywheel object
 const EMPTY_ARRAY = [];
@@ -298,7 +299,10 @@ class Composer extends React.Component {
 }
 
 const ConnectedComposer = connect(
-  ({ referenceGrammarID }) => ({ referenceGrammarID })
+  ({ referenceGrammarID }) => ({ referenceGrammarID }),
+  null,
+  null,
+  { context: StoreContext }
 )(props =>
   <ScrollToBottomComposer>
     <ScrollToBottomFunctionContext.Consumer>
@@ -324,10 +328,15 @@ class ConnectedComposerWithStore extends React.Component {
     const { props } = this;
 
     return (
-      <ConnectedComposer
-        { ...props }
+      <Provider
+        context={ StoreContext }
         store={ props.store || this.createMemoizedStore() }
-      />
+      >
+        <ConnectedComposer
+          { ...props }
+          store={ undefined }
+        />
+      </Provider>
     );
   }
 }

@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import React from 'react';
 
 import Context from './Context';
+import StoreContext from './StoreContext';
 
 function combineSelectors(...selectors) {
   return (...args) => selectors.reduce((result, selector) => ({
@@ -27,7 +28,10 @@ export default function (...selectors) {
 
   return Component => {
     const ConnectedComponent = connect(
-      (state, { context, store, ...ownProps }) => combinedSelector({ ...state, ...context }, ownProps)
+      (state, { context, store, ...ownProps }) => combinedSelector({ ...state, ...context }, ownProps),
+      null,
+      null,
+      { context: StoreContext }
     )(Component);
 
     return props => (
