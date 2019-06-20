@@ -1,8 +1,6 @@
-export default function createErrorBoxStyle({
-  monospaceFont,
-  primaryFont
-}) {
+export default function createErrorBoxStyle({ monospaceFont, primaryFont }) {
   return {
+    // TODO: [P2] We should not set "display" in styleSet, this will allow the user to break the layout for no good reasons.
     display: 'flex',
     flexDirection: 'column',
     fontFamily: primaryFont,

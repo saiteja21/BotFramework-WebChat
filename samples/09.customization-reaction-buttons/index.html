@@ -2,6 +2,7 @@
 <html lang="en-US">
   <head>
     <title>Web Chat: Custom attachment with GitHub Stargazers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--
       For simplicity and code clarity, we are using Babel and React from unpkg.com.
     -->
@@ -15,7 +16,7 @@
       When you are using Web Chat for production, you should use the latest stable release at "/latest/webchat.js",
       or lock down on a specific version with the following format: "/4.1.0/webchat.js".
     -->
-    <script src="/webchat.js"></script>
+    <script src="https://cdn.botframework.com/botframework-webchat/master/webchat.js"></script>
     <style>
       html, body { height: 100% }
       body { margin: 0 }
@@ -57,7 +58,6 @@
             '& > li > button': {
               background: 'White',
               border: 'solid 1px #E6E6E6',
-              cursor: 'pointer',
               marginBottom: 2,
               padding: '2px 5px 5px'
             }

@@ -1,8 +1,5 @@
-export default function createSuggestedActionsStyle({
-  paddingRegular
-}) {
-  return {
-    paddingLeft: paddingRegular / 2,
-    paddingRight: paddingRegular / 2
-  };
+/* eslint no-empty-pattern: "off" */
+
+export default function createSuggestedActionsStyle({}) {
+  return {};
 }

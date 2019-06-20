@@ -1,4 +1,4 @@
-export default function ({
+export default function createSendBoxButtonStyle({
   sendBoxButtonColor,
   sendBoxButtonColorOnDisabled,
   sendBoxButtonColorOnFocus,
@@ -16,8 +16,6 @@ export default function ({
     width: sendBoxHeight,
 
     '&:not(:disabled)': {
-      cursor: 'pointer',
-
       '&:focus svg': {
         fill: sendBoxButtonColorOnFocus
       },

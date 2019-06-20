@@ -1,3 +1,5 @@
+/* eslint no-magic-numbers: ["error", { "ignore": [1] }] */
+
 import iterator from 'markdown-it-for-inline';
 import MarkdownIt from 'markdown-it';
 import sanitizeHTML from 'sanitize-html';
@@ -7,6 +9,7 @@ const SANITIZE_HTML_OPTIONS = {
     a: ['href', 'name', 'target', 'title'],
     img: ['alt', 'src']
   },
+  allowedSchemes: ['data', 'http', 'https', 'ftp', 'mailto', 'sip'],
   allowedTags: [
     'a',
     'b',
@@ -45,7 +48,7 @@ const SANITIZE_HTML_OPTIONS = {
 };
 
 const customMarkdownIt = new MarkdownIt({
-  breaks: true,
+  breaks: false,
   html: false,
   linkify: true,
   typographer: true,
@@ -70,7 +73,10 @@ const customMarkdownIt = new MarkdownIt({
   }
 });
 
-export default function render(markdown) {
+export default function render(markdown, { markdownRespectCRLF }) {
+  if (markdownRespectCRLF) {
+    markdown = markdown.replace(/\n\r|\r\n/gu, carriageReturn => (carriageReturn === '\n\r' ? '\r\n' : '\n\r'));
+  }
   const html = customMarkdownIt.render(markdown);
 
   return sanitizeHTML(html, SANITIZE_HTML_OPTIONS);

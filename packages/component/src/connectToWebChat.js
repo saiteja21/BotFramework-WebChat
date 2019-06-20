@@ -3,13 +3,6 @@ import React from 'react';
 
 import Context from './Context';
 
-function combineSelectors(...selectors) {
-  return (...args) => selectors.reduce((result, selector) => ({
-    ...result,
-    ...removeUndefinedValues((selector && selector(...args)) || {})
-  }), {});
-}
-
 function removeUndefinedValues(map) {
   return Object.keys(map).reduce((result, key) => {
     const value = map[key];
@@ -22,20 +15,31 @@ function removeUndefinedValues(map) {
   }, {});
 }
 
-export default function (...selectors) {
+function combineSelectors(...selectors) {
+  return (...args) =>
+    selectors.reduce(
+      (result, selector) => ({
+        ...result,
+        ...removeUndefinedValues((selector && selector(...args)) || {})
+      }),
+      {}
+    );
+}
+
+export default function connectToWebChat(...selectors) {
   const combinedSelector = combineSelectors(...selectors);
 
   return Component => {
-    const ConnectedComponent = connect(
-      (state, { context, store, ...ownProps }) => combinedSelector({ ...state, ...context }, ownProps)
+    const ConnectedComponent = connect((state, { context, _, ...ownProps }) =>
+      combinedSelector({ ...state, ...context }, ownProps)
     )(Component);
 
-    return props => (
+    const WebChatConnectedComponent = props => (
       <Context.Consumer>
-        {
-          context => <ConnectedComponent { ...props } context={ context } store={ context.store } />
-        }
+        {context => <ConnectedComponent {...props} context={context} store={context.store} />}
       </Context.Consumer>
     );
+
+    return WebChatConnectedComponent;
   };
 }

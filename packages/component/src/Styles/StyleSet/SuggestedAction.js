@@ -1,3 +1,5 @@
+/* eslint no-magic-numbers: "off" */
+
 export default function createSuggestedActionStyle({
   paddingRegular,
   paddingWide,
@@ -5,6 +7,7 @@ export default function createSuggestedActionStyle({
   suggestedActionBackground,
   suggestedActionBorder,
   suggestedActionBorderRadius,
+  suggestedActionImageHeight,
   suggestedActionTextColor,
   suggestedActionDisabledBackground,
   suggestedActionDisabledBorder,
@@ -18,12 +21,13 @@ export default function createSuggestedActionStyle({
     paddingTop: paddingRegular,
 
     '& > button': {
+      alignItems: 'center',
+      borderRadius: suggestedActionBorderRadius,
       fontFamily: primaryFont,
       fontSize: 'inherit',
       height: suggestedActionHeight,
       paddingLeft: paddingWide,
       paddingRight: paddingWide,
-      borderRadius: suggestedActionBorderRadius,
 
       '&:disabled': {
         background: suggestedActionDisabledBackground,
@@ -34,8 +38,12 @@ export default function createSuggestedActionStyle({
       '&:not(:disabled)': {
         background: suggestedActionBackground,
         border: suggestedActionBorder,
-        color: suggestedActionTextColor,
-        cursor: 'pointer'
+        color: suggestedActionTextColor
+      },
+
+      '& > img': {
+        height: suggestedActionImageHeight,
+        paddingRight: paddingRegular
       }
     }
   };

@@ -1,3 +1,5 @@
+/* eslint no-magic-numbers: ["error", { "ignore": [1, 5, 24, 48, 60000, 3600000] }] */
+
 function xMinutesAgo(dateStr) {
   const date = new Date(dateStr);
   const dateTime = date.getTime();
@@ -16,52 +18,51 @@ function xMinutesAgo(dateStr) {
   } else if (deltaInMinutes === 1) {
     return 'Il y a une minute';
   } else if (deltaInHours < 1) {
-    return `Il y a ${ deltaInMinutes } minutes`;
+    return `Il y a ${deltaInMinutes} minutes`;
   } else if (deltaInHours === 1) {
     return `Il y a une heure`;
   } else if (deltaInHours < 5) {
-    return `Il y a ${ deltaInHours } heures`;
+    return `Il y a ${deltaInHours} heures`;
   } else if (deltaInHours <= 24) {
     return `Aujourd'hui`;
   } else if (deltaInHours <= 48) {
     return `Hier`;
   } else if (window.Intl) {
     return new Intl.DateTimeFormat('fr-FR').format(date);
-  } else {
-    return date.toLocaleString('fr-FR', {
-      day: '2-digit',
-      hour: '2-digit',
-      hour12: false,
-      minute: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
   }
+
+  return date.toLocaleString('fr-FR', {
+    day: '2-digit',
+    hour: '2-digit',
+    hour12: false,
+    minute: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
 }
 
 export default {
   // FAILED_CONNECTION_NOTIFICATION: '',
   // Do not localize {Retry}; it is a placeholder for "Retry". English translation should be, "Send failed. Retry."
-  SEND_FAILED_KEY: 'Échec d\'envoi, {Retry}.',
+  SEND_FAILED_KEY: "Échec d'envoi, {Retry}.",
   // SLOW_CONNECTION_NOTIFICATION: '',
-  'Chat': 'Discuter',
+  Chat: 'Discuter',
   // 'Download file': '',
   // 'Microphone off': '',
   // 'Microphone on': '',
-  'Left': 'Gauche',
+  Left: 'Gauche',
   'Listening…': 'Écoute…',
   'New messages': 'Nouveaux messages',
-  'retry': 'Réessayer',
-  'Right': 'Droite',
-  'Retry': '{retry}', // Please alter this value if 'Retry' at the beginning of a sentence is written differently than at the end of a sentence.
-  'Send': 'Envoyer',
-  'Sending': 'Envoi…',
-  'Speak': 'Parlez',
+  Retry: 'Réessayer',
+  Right: 'Droite',
+  Send: 'Envoyer',
+  Sending: 'Envoi…',
+  Speak: 'Parlez',
   'Starting…': 'Démarrage…',
-  'Tax': 'Taxe',
-  'Total': 'Total',
+  Tax: 'Taxe',
+  Total: 'Total',
   'Type your message': 'Saisissez votre message',
   'Upload file': 'Envoyer fichier',
-  'VAT': 'TVA',
+  VAT: 'TVA',
   'X minutes ago': xMinutesAgo
-}
+};

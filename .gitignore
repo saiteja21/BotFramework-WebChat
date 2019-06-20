@@ -10,3 +10,5 @@
 chromedriver.exe
 
 /image-snapshots.zip
+/.vs
+.DS_Store

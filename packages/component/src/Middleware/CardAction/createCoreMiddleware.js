@@ -1,8 +1,4 @@
-import {
-  sendMessage,
-  sendMessageBack,
-  sendPostBack
-} from 'botframework-webchat-core';
+import { sendMessage, sendMessageBack, sendPostBack } from 'botframework-webchat-core';
 
 export default function createDefaultCardActionMiddleware() {
   return ({ dispatch }) => next => ({ cardAction, getSignInUrl }) => {
@@ -38,15 +34,18 @@ export default function createDefaultCardActionMiddleware() {
         window.open(value);
         break;
 
-      case 'signin':
+      case 'signin': {
         // TODO: [P3] We should prime the URL into the OAuthCard directly, instead of calling getSessionId on-demand
         //       This is to eliminate the delay between window.open() and location.href call
 
         const popup = window.open();
 
-        getSignInUrl().then(url => popup.location.href = url);
+        getSignInUrl().then(url => {
+          popup.location.href = url;
+        });
 
         break;
+      }
 
       default:
         return next({ cardAction, getSignInUrl });

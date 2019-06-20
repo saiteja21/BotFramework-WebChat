@@ -1,4 +1,6 @@
-const { navigator: { userAgent } } = window;
+const {
+  navigator: { userAgent }
+} = window;
 
 const IE_FOCUSABLE_LIST = [
   'a',
@@ -14,10 +16,10 @@ const IE_FOCUSABLE_LIST = [
   'textarea'
 ];
 
-const IS_FIREFOX = /Firefox\//i.test(userAgent);
-const IS_IE = /Trident\//i.test(userAgent);
+const IS_FIREFOX = /Firefox\//iu.test(userAgent);
+const IS_IE = /Trident\//iu.test(userAgent);
 
-export default function getTabIndex(element: HTMLElement) {
+export default function getTabIndex(element) {
   const { tabIndex } = element;
 
   if (IS_IE) {
@@ -35,4 +37,4 @@ export default function getTabIndex(element: HTMLElement) {
   }
 
   return tabIndex;
-};
+}

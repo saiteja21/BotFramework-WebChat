@@ -1,3 +1,5 @@
+/* global VERSION:readonly */
+
 import connect from './actions/connect';
 import createStore from './createStore';
 import disconnect from './actions/disconnect';
@@ -51,7 +53,6 @@ export {
   stopSpeakingActivity,
   submitSendBox,
   version,
-
-  // TODO: [P3] Take this deprecation code out when releasing on or after January 13 2020 
+  // TODO: [P3] Take this deprecation code out when releasing on or after January 13 2020
   setSendTyping
-}
+};

@@ -1,8 +1,13 @@
-import { css } from 'glamor';
-import classNames from 'classnames';
-import React from 'react';
+/* eslint-disable no-sync */
+/* eslint react/no-array-index-key: "off" */
 
 import { Constants } from 'botframework-webchat-core';
+import { css } from 'glamor';
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
+import remark from 'remark';
+import stripMarkdown from 'strip-markdown';
 
 import { localize } from '../Localization/Localize';
 import Avatar from './Avatar';
@@ -12,7 +17,9 @@ import SendStatus from './SendStatus';
 import textFormatToContentType from '../Utils/textFormatToContentType';
 import Timestamp from './Timestamp';
 
-const { ActivityClientState: { SENDING, SEND_FAILED } } = Constants;
+const {
+  ActivityClientState: { SENDING, SEND_FAILED }
+} = Constants;
 
 const ROOT_CSS = css({
   display: 'flex',
@@ -25,7 +32,7 @@ const ROOT_CSS = css({
     flexGrow: 1,
     overflow: 'hidden',
 
-    '& > .row': {
+    '& > .webchat__row': {
       display: 'flex',
 
       '& > .bubble, & > .timestamp': {
@@ -47,136 +54,139 @@ const ROOT_CSS = css({
   '&.from-user': {
     flexDirection: 'row-reverse',
 
-    '& > .content > .row': {
+    '& > .content > .webchat__row': {
       flexDirection: 'row-reverse'
     }
   }
 });
 
-const connectStackedLayout = (...selectors) => connectToWebChat(
-  ({
-    language,
-    styleSet: {
-      options: {
-        botAvatarInitials,
-        userAvatarInitials
-      }
-    }
-  }, { activity }) => ({
-    avatarInitials: activity.from && activity.from.role === 'user' ? userAvatarInitials : botAvatarInitials,
-    language,
+const connectStackedLayout = (...selectors) =>
+  connectToWebChat(
+    (
+      {
+        language,
+        styleSet: {
+          options: { botAvatarInitials, userAvatarInitials }
+        }
+      },
+      { activity: { from: { role } = {} } = {} }
+    ) => ({
+      avatarInitials: role === 'user' ? userAvatarInitials : botAvatarInitials,
+      language,
 
-    // TODO: [P4] We want to deprecate botAvatarInitials/userAvatarInitials because they are not as helpful as avatarInitials
-    botAvatarInitials,
-    userAvatarInitials
-  }),
-  ...selectors
-);
+      // TODO: [P4] We want to deprecate botAvatarInitials/userAvatarInitials because they are not as helpful as avatarInitials
+      botAvatarInitials,
+      userAvatarInitials
+    }),
+    ...selectors
+  );
 
-export default connectStackedLayout(
-  ({
-    avatarInitials,
-    language,
-    styleSet
-  }) => ({
-    avatarInitials,
-    language,
-    styleSet
-  })
-)(
-  ({
-    activity,
-    avatarInitials,
-    children,
-    language,
-    styleSet,
-    timestampClassName
-  }) => {
-    const fromUser = activity.from.role === 'user';
-    const { state } = activity.channelData || {};
-    const showSendStatus = state === SENDING || state === SEND_FAILED;
-    const ariaLabel = localize(fromUser ? 'User said something' : 'Bot said something', language, avatarInitials, activity.text, activity.timestamp);
-    const activityDisplayText =
-      (
-        activity.channelData
-        && activity.channelData.messageBack
-        && activity.channelData.messageBack.displayText
-      ) || activity.text;
+const StackedLayout = ({ activity, avatarInitials, children, language, styleSet, timestampClassName }) => {
+  const {
+    attachments = [],
+    channelData: { messageBack: { displayText: messageBackDisplayText } = {}, state } = {},
+    from: { role } = {},
+    text,
+    textFormat,
+    type
+  } = activity;
 
-    return (
-      <div
-        className={ classNames(
-          ROOT_CSS + '',
-          styleSet.stackedLayout + '',
-          { 'from-user': fromUser }
-        ) }
-      >
-        <Avatar
-          aria-hidden={ true }
-          className="avatar"
-          fromUser={ fromUser }
-        />
-        <div className="content">
-          {
-            activity.type === 'typing' ?
-              <div className="row typing">
-                {
-                  children({
-                    activity,
-                    attachment: { contentType: 'typing' }
-                  })
-                }
-                <div className="filler" />
-              </div>
-            : !!activityDisplayText &&
-              <div className="row message">
-                <Bubble
-                  aria-label={ ariaLabel }
-                  className="bubble"
-                  fromUser={ fromUser }
-                >
-                  {
-                    children({
-                      activity,
-                      attachment: {
-                        contentType: textFormatToContentType(activity.textFormat),
-                        content: activityDisplayText
-                      }
-                    })
-                  }
-                </Bubble>
-                <div className="filler" />
-              </div>
-          }
-          {
-            (activity.attachments || []).map((attachment, index) =>
-              <div className="row attachment" key={ index }>
-                <Bubble
-                  className="attachment bubble"
-                  fromUser={ fromUser }
-                  key={ index }
-                >
-                  { children({ attachment }) }
-                </Bubble>
-              </div>
-            )
-          }
-          <div
-            aria-hidden={ true }
-            className="row"
-          >
-            { showSendStatus ?
-                <SendStatus activity={ activity } className="timestamp" />
-              :
-                <Timestamp activity={ activity } className={ classNames('timestamp', timestampClassName) } />
-            }
+  const activityDisplayText = messageBackDisplayText || text;
+  const fromUser = role === 'user';
+  const showSendStatus = state === SENDING || state === SEND_FAILED;
+  const plainText = remark()
+    .use(stripMarkdown)
+    .processSync(text);
+  const ariaLabel = localize(
+    fromUser ? 'User said something' : 'Bot said something',
+    language,
+    avatarInitials,
+    plainText
+  );
+
+  return (
+    <div className={classNames(ROOT_CSS + '', styleSet.stackedLayout + '', { 'from-user': fromUser })}>
+      <Avatar aria-hidden={true} className="avatar" fromUser={fromUser} />
+      <div className="content">
+        {type === 'typing' ? (
+          <div className="webchat__row typing">
+            {children({
+              activity,
+              attachment: { contentType: 'typing' }
+            })}
             <div className="filler" />
           </div>
+        ) : (
+          !!activityDisplayText && (
+            <div aria-label={ariaLabel} className="webchat__row message">
+              <Bubble aria-hidden={true} className="bubble" fromUser={fromUser}>
+                {children({
+                  activity,
+                  attachment: {
+                    content: activityDisplayText,
+                    contentType: textFormatToContentType(textFormat)
+                  }
+                })}
+              </Bubble>
+              <div className="filler" />
+            </div>
+          )
+        )}
+        {attachments.map((attachment, index) => (
+          <div className="webchat__row attachment" key={index}>
+            <Bubble aria-hidden={true} className="attachment bubble" fromUser={fromUser} key={index}>
+              {children({ attachment })}
+            </Bubble>
+          </div>
+        ))}
+        <div className="webchat__row">
+          {showSendStatus ? (
+            <SendStatus activity={activity} className="timestamp" />
+          ) : (
+            <Timestamp activity={activity} aria-hidden={true} className={classNames('timestamp', timestampClassName)} />
+          )}
+          <div className="filler" />
         </div>
-        <div className="filler" />
       </div>
-    );
-  }
-)
+      <div className="filler" />
+    </div>
+  );
+};
 
-export { connectStackedLayout }
+StackedLayout.defaultProps = {
+  children: undefined,
+  timestampClassName: ''
+};
+
+StackedLayout.propTypes = {
+  activity: PropTypes.shape({
+    attachments: PropTypes.array,
+    channelData: PropTypes.shape({
+      messageBack: PropTypes.shape({
+        displayText: PropTypes.string
+      })
+    }),
+    from: PropTypes.shape({
+      role: PropTypes.string.isRequired
+    }).isRequired,
+    text: PropTypes.string,
+    textFormat: PropTypes.string,
+    timestamp: PropTypes.string,
+    type: PropTypes.string.isRequired
+  }).isRequired,
+  avatarInitials: PropTypes.string.isRequired,
+  children: PropTypes.any,
+  language: PropTypes.string.isRequired,
+  styleSet: PropTypes.shape({
+    stackedLayout: PropTypes.any.isRequired
+  }).isRequired,
+  timestampClassName: PropTypes.string
+};
+
+export default connectStackedLayout(({ avatarInitials, language, styleSet }) => ({
+  avatarInitials,
+  language,
+  styleSet
+}))(StackedLayout);
+
+export { connectStackedLayout };
