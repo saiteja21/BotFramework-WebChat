@@ -3,7 +3,7 @@
 // Before executing,
 //   Delete tag gittest_tag from github.
 //   Delete file dummy.txt from github.
-//   Delete folder BotFramework-WebChat.
+//   Delete folder BotFramework-WebChat...
 
 const USER = process.env.GITUSER;
 const PASS = process.env.GITPW;
