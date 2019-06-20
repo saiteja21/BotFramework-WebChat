@@ -12,7 +12,10 @@ const ORG = 'BruceHaley'
 const REPO = `github.com/${ORG}/BotFramework-WebChat`;
 
 const git = require('simple-git/promise');
-const remote = `https://${USER}:${PASS}@${REPO}`;
+// With credentials
+//const remote = `https://${USER}:${PASS}@${REPO}`;
+// Without credentials
+const remote = `https://${REPO}`;
 const rootDir = 'BotFramework-WebChat';
 const newTempDir = 'tempDir'
 
