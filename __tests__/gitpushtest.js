@@ -8,7 +8,8 @@
 const USER = process.env.GITUSER;
 const PASS = process.env.GITPW;
 const EMAIL = 'some@one.com';
-const REPO = 'github.com/microsoft/BotFramework-WebChat';
+const ORG = 'BruceHaley'
+const REPO = `github.com/${ORG}/BotFramework-WebChat`;
 
 const git = require('simple-git/promise');
 const remote = `https://${USER}:${PASS}@${REPO}`;
