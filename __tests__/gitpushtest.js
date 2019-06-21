@@ -27,7 +27,7 @@ var fs = require('fs');
 //    })
 //}
 
-async function gittest() {
+test('git test', async () => {
     console.log("begin gittest()");
     // First, set up a local repo.
     // Go to parent of root folder.
@@ -161,9 +161,9 @@ async function gittest() {
         .then((result) => console.log("status 4 finished: ", result))
         .catch((err) => console.error('status 4 failed: ', err));
     console.log("end gittest()");
-}
+});
 
-console.log("gittest2: calling gittest()");
-gittest();
+// console.log("gittest2: calling gittest()");
+// gittest();
 //console.log("end of gittest2");
 
