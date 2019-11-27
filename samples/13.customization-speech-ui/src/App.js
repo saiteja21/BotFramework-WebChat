@@ -1,65 +1,68 @@
 import './App.css';
+
 import {
   Components,
-  createDirectLine,
-  createCognitiveServicesSpeechServicesPonyfillFactory
+  createCognitiveServicesSpeechServicesPonyfillFactory,
+  createDirectLine
 } from 'botframework-webchat';
-import React, { Component } from 'react';
+
+import React, { useEffect, useMemo, useState } from 'react';
 
 import CustomDictationInterims from './CustomDictationInterims';
 import CustomMicrophoneButton from './CustomMicrophoneButton';
-import {
-  region as fetchSpeechServicesRegion,
-  token as fetchSpeechServicesToken
-} from './fetchSpeechServicesCredentials';
+
+import fetchCognitiveServicesCredentials, { token as fetchSpeechServicesToken } from './fetchSpeechServicesCredentials';
+
 import LastBotActivity from './LastBotActivity';
+import fetchDirectLineToken from './fetchDirectLineToken';
 
 const { Composer } = Components;
 
-export default class App extends Component {
-  constructor(props) {
-    super(props);
+const App = () => {
+  const [directLineToken, setDirectLineToken] = useState();
+  const [cognitiveServicesCredentials, setCognitiveServicesCredentials] = useState();
 
-    this.state = {
-      directLine: null,
-      webSpeechPonyfillFactory: null
-    };
-  }
-
-  async componentDidMount() {
-    const res = await fetch('https://webchat-mockbot.azurewebsites.net/directline/token', { method: 'POST' });
-    const { token } = await res.json();
-    const webSpeechPonyfillFactory = await createCognitiveServicesSpeechServicesPonyfillFactory({
-      authorizationToken: fetchSpeechServicesToken,
-      region: await fetchSpeechServicesRegion()
-    });
-
-    this.setState(() => ({
-      directLine: createDirectLine({
-        token
+  const directLine = useMemo(
+    () =>
+      directLineToken &&
+      createDirectLine({
+        token: directLineToken
       }),
-      webSpeechPonyfillFactory
-    }));
-  }
+    [directLineToken]
+  );
 
-  render() {
-    const {
-      state: { directLine, webSpeechPonyfillFactory }
-    } = this;
+  const webSpeechPonyfillFactory = useMemo(
+    () =>
+      cognitiveServicesCredentials &&
+      createCognitiveServicesSpeechServicesPonyfillFactory({
+        authorizationToken: fetchSpeechServicesToken,
+        region: cognitiveServicesCredentials.region
+      }),
+    [cognitiveServicesCredentials]
+  );
 
-    return (
-      !!directLine &&
-      !!webSpeechPonyfillFactory && (
-        <Composer directLine={directLine} webSpeechPonyfillFactory={webSpeechPonyfillFactory}>
-          <div className="App">
-            <header className="App-header">
-              <CustomMicrophoneButton className="App-speech-button" />
-              <CustomDictationInterims className="App-speech-interims" />
-              <LastBotActivity className="App-bot-activity" />
-            </header>
-          </div>
-        </Composer>
-      )
-    );
-  }
-}
+  useEffect(() => {
+    (async () => setCognitiveServicesCredentials(await fetchCognitiveServicesCredentials()))();
+  }, [setCognitiveServicesCredentials]);
+
+  useEffect(() => {
+    (async () => setDirectLineToken(await fetchDirectLineToken()))();
+  }, [setDirectLineToken]);
+
+  return (
+    !!directLine &&
+    !!webSpeechPonyfillFactory && (
+      <Composer directLine={directLine} webSpeechPonyfillFactory={webSpeechPonyfillFactory}>
+        <div className="App">
+          <header className="App-header">
+            <CustomMicrophoneButton className="App-speech-button" />
+            <CustomDictationInterims className="App-speech-interims" />
+            <LastBotActivity className="App-bot-activity" />
+          </header>
+        </div>
+      </Composer>
+    )
+  );
+};
+
+export default App;

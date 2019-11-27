@@ -1,20 +1,42 @@
+import { hooks, Constants } from 'botframework-webchat';
 import React from 'react';
 
-import { Components, Constants } from 'botframework-webchat';
+const { useActivities, useDictateState, useDictateInterims } = hooks;
 
-const { connectDictationInterims } = Components;
+// TODO: [P1] Some of our hooks are not in master yet, we are copying the code here.
 const {
   DictateState: { DICTATING, STARTING }
 } = Constants;
 
-export default connectDictationInterims()(
-  ({ className, dictateInterims, dictateState }) =>
+// TODO: [P1] Some of our hooks are not in master yet, we are copying the code here.
+function activityIsSpeakingOrQueuedToSpeak({ channelData: { speak } = {} }) {
+  return !!speak;
+}
+
+// TODO: [P1] Some of our hooks are not in master yet, we are copying the code here.
+function useSendBoxSpeechInterimsVisible() {
+  const [activities] = useActivities();
+  const [dictateState] = useDictateState();
+
+  return [
     (dictateState === STARTING || dictateState === DICTATING) &&
-    !!dictateInterims.length && (
+      !activities.filter(activityIsSpeakingOrQueuedToSpeak).length
+  ];
+}
+
+const CustomDictationInterims = ({ className }) => {
+  const [dictateInterims] = useDictateInterims();
+  const [speechInterimsVisible] = useSendBoxSpeechInterimsVisible();
+
+  return (
+    !!speechInterimsVisible && (
       <p className={className}>
         {dictateInterims.map((interim, index) => (
           <span key={index}>{interim}&nbsp;</span>
         ))}
       </p>
     )
-);
+  );
+};
+
+export default CustomDictationInterims;

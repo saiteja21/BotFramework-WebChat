@@ -1,13 +1,21 @@
+import { hooks } from 'botframework-webchat';
 import classNames from 'classnames';
 import React from 'react';
-import { Components } from 'botframework-webchat';
 
 import MicrophoneIcon from './MicrophoneIcon';
 
-const { connectMicrophoneButton } = Components;
+const { useMicrophoneButtonClick, useMicrophoneButtonDisabled, useSendBoxDictationStarted } = hooks;
 
-export default connectMicrophoneButton()(({ className, click, dictating, disabled }) => (
-  <button className={classNames(className, { dictating })} disabled={disabled} onClick={click}>
-    <MicrophoneIcon size="10vmin" />
-  </button>
-));
+const CustomMicrophoneButton = ({ className }) => {
+  const [dictating] = useSendBoxDictationStarted();
+  const [disabled] = useMicrophoneButtonDisabled();
+  const click = useMicrophoneButtonClick();
+
+  return (
+    <button className={classNames(className, { dictating })} disabled={disabled} onClick={click}>
+      <MicrophoneIcon size="10vmin" />
+    </button>
+  );
+};
+
+export default CustomMicrophoneButton;
