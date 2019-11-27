@@ -1,0 +1,18 @@
+.App-SpeechInterims {
+  backdrop-filter: blur(10px);
+  color: White;
+  display: flex;
+  font-size: 10vmin;
+  height: 100vh;
+  left: 0;
+  padding: 10vmin;
+  position: absolute;
+  top: 0;
+  transition: backdrop-filter 300ms;
+  width: 100vw;
+}
+
+.App-SpeechInterims.hide {
+  /* Performance is slightly better if we keep blur filter in the chain */
+  backdrop-filter: blur(0);
+}

@@ -1,3 +1,6 @@
+import './SpeechInterims.css';
+
+import classNames from 'classnames';
 import { hooks, Constants } from 'botframework-webchat';
 import React from 'react';
 
@@ -24,18 +27,14 @@ function useSendBoxSpeechInterimsVisible() {
   ];
 }
 
-const CustomDictationInterims = ({ className }) => {
+const CustomDictationInterims = () => {
   const [dictateInterims] = useDictateInterims();
   const [speechInterimsVisible] = useSendBoxSpeechInterimsVisible();
 
   return (
-    !!speechInterimsVisible && (
-      <p className={className}>
-        {dictateInterims.map((interim, index) => (
-          <span key={index}>{interim}&nbsp;</span>
-        ))}
-      </p>
-    )
+    <div className={classNames('App-SpeechInterims', { hide: !speechInterimsVisible })}>
+      {!!speechInterimsVisible && dictateInterims.map((interim, index) => <span key={index}>{interim}&nbsp;</span>)}
+    </div>
   );
 };
 

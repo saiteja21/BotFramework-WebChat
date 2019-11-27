@@ -8,12 +8,12 @@ import {
 
 import React, { useEffect, useMemo, useState } from 'react';
 
-import CustomDictationInterims from './CustomDictationInterims';
-import CustomMicrophoneButton from './CustomMicrophoneButton';
+import Clock from './Clock';
+import MicrophoneButton from './MicrophoneButton';
+import LastBotActivity from './LastBotActivity';
+import SpeechInterims from './SpeechInterims';
 
 import fetchCognitiveServicesCredentials, { token as fetchSpeechServicesToken } from './fetchSpeechServicesCredentials';
-
-import LastBotActivity from './LastBotActivity';
 import fetchDirectLineToken from './fetchDirectLineToken';
 
 const { Composer } = Components;
@@ -52,15 +52,18 @@ const App = () => {
   return (
     !!directLine &&
     !!webSpeechPonyfillFactory && (
-      <Composer directLine={directLine} webSpeechPonyfillFactory={webSpeechPonyfillFactory}>
-        <div className="App">
-          <header className="App-header">
-            <CustomMicrophoneButton className="App-speech-button" />
-            <CustomDictationInterims className="App-speech-interims" />
-            <LastBotActivity className="App-bot-activity" />
-          </header>
-        </div>
-      </Composer>
+      <div>
+        <Composer directLine={directLine} webSpeechPonyfillFactory={webSpeechPonyfillFactory}>
+          <div className="App">
+            <header className="App-header">
+              <Clock />
+              <SpeechInterims />
+              <LastBotActivity />
+              <MicrophoneButton />
+            </header>
+          </div>
+        </Composer>
+      </div>
     )
   );
 };

@@ -6,6 +6,12 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  background-image: url(assets/img102.jpg);
+  background-position: 50% 50%;
+  background-size: cover;
+  height: 100vh;
+  overflow: hidden;
 }
 
 code {
