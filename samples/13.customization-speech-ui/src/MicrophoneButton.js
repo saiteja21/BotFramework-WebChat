@@ -4,7 +4,7 @@ import { hooks } from 'botframework-webchat';
 import classNames from 'classnames';
 import React from 'react';
 
-import MicrophoneIcon from './MicrophoneIcon';
+// import MicrophoneIcon from './MicrophoneIcon';
 
 const { useMicrophoneButtonClick, useMicrophoneButtonDisabled, useSendBoxDictationStarted } = hooks;
 

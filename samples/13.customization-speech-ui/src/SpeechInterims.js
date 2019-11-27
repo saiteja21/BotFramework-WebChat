@@ -30,6 +30,8 @@ function useSendBoxSpeechInterimsVisible() {
 const CustomDictationInterims = () => {
   const [dictateInterims] = useDictateInterims();
   const [speechInterimsVisible] = useSendBoxSpeechInterimsVisible();
+  // const dictateInterims = ['Hello, World! 1, 2, 3, 4, 5.'];
+  // const speechInterimsVisible = true;
 
   return (
     <div className={classNames('App-SpeechInterims', { hide: !speechInterimsVisible })}>

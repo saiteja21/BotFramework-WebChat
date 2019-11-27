@@ -8,6 +8,7 @@ import {
 
 import React, { useEffect, useMemo, useState } from 'react';
 
+import BlurLens from './BlurLens';
 import Clock from './Clock';
 import MicrophoneButton from './MicrophoneButton';
 import LastBotActivity from './LastBotActivity';
@@ -57,6 +58,7 @@ const App = () => {
           <div className="App">
             <header className="App-header">
               <Clock />
+              <BlurLens />
               <SpeechInterims />
               <LastBotActivity />
               <MicrophoneButton />
