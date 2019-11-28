@@ -1,5 +1,5 @@
 .App-BlurLens {
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px) brightness(130%) contrast(90%);
   height: 100vh;
   left: 0;
   position: absolute;
@@ -9,6 +9,5 @@
 }
 
 .App-BlurLens.hide {
-  /* Performance is slightly better if we keep blur filter in the chain */
-  backdrop-filter: blur(0);
+  backdrop-filter: none;
 }

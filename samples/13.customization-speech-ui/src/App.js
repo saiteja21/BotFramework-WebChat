@@ -8,16 +8,11 @@ import {
 
 import React, { useEffect, useMemo, useState } from 'react';
 
-import BlurLens from './BlurLens';
-import Clock from './Clock';
-import MicrophoneButton from './MicrophoneButton';
-import LastBotActivity from './LastBotActivity';
-import SpeechInterims from './SpeechInterims';
-
 import fetchCognitiveServicesCredentials, { token as fetchSpeechServicesToken } from './fetchSpeechServicesCredentials';
 import fetchDirectLineToken from './fetchDirectLineToken';
+import SmartDisplay from './SmartDisplay';
 
-const { Composer } = Components;
+const { AdaptiveCardsComposer, Composer } = Components;
 
 const App = () => {
   const [directLineToken, setDirectLineToken] = useState();
@@ -54,17 +49,11 @@ const App = () => {
     !!directLine &&
     !!webSpeechPonyfillFactory && (
       <div>
-        <Composer directLine={directLine} webSpeechPonyfillFactory={webSpeechPonyfillFactory}>
-          <div className="App">
-            <header className="App-header">
-              <Clock />
-              <BlurLens />
-              <SpeechInterims />
-              <LastBotActivity />
-              <MicrophoneButton />
-            </header>
-          </div>
-        </Composer>
+        <AdaptiveCardsComposer>
+          <Composer directLine={directLine} webSpeechPonyfillFactory={webSpeechPonyfillFactory}>
+            <SmartDisplay />
+          </Composer>
+        </AdaptiveCardsComposer>
       </div>
     )
   );
