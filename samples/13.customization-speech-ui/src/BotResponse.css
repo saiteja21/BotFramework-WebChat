@@ -12,14 +12,14 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, .5);
   color: Black;
   font-size: 4vmin;
-  margin: 4vmin;
+  margin: 4vmin 4vmin 0;
   padding: 2vmin 3vmin 2vmin;
 }
 
 .App-BotResponse-Attachments {
   list-style-type: none;
   margin: 0;
-  zoom: 1.75;
+  zoom: 2;
 }
 
 .App-BotResponse-Attachments .App-BotResponse-Attachment {

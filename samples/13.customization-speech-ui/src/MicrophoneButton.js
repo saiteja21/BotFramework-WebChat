@@ -20,8 +20,8 @@ const CustomMicrophoneButton = ({ onClick }) => {
   }, [click, onClick]);
 
   useEffect(() => {
-    setTimeout(() => sendMessage('carousel'), 1000);
-    // setTimeout(() => sendMessage('card breakfast weather bingsports'), 1000);
+    // setTimeout(() => sendMessage('carousel'), 1000);
+    setTimeout(() => sendMessage('card breakfast weather bingsports'), 1000);
     // setTimeout(() => sendMessage('thumbnailcard'), 1000);
   }, [sendMessage]);
 
