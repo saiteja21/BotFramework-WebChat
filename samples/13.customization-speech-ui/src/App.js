@@ -12,7 +12,7 @@ import fetchCognitiveServicesCredentials, { token as fetchSpeechServicesToken } 
 import fetchDirectLineToken from './fetchDirectLineToken';
 import SmartDisplay from './SmartDisplay';
 
-const { ComposerWithAdaptiveCards } = Components;
+const { Composer } = Components;
 
 const App = () => {
   const [directLineToken, setDirectLineToken] = useState();
@@ -48,9 +48,9 @@ const App = () => {
   return (
     !!directLine &&
     !!webSpeechPonyfillFactory && (
-      <ComposerWithAdaptiveCards directLine={directLine} webSpeechPonyfillFactory={webSpeechPonyfillFactory}>
+      <Composer directLine={directLine} webSpeechPonyfillFactory={webSpeechPonyfillFactory}>
         <SmartDisplay />
-      </ComposerWithAdaptiveCards>
+      </Composer>
     )
   );
 };
