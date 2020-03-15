@@ -30,6 +30,7 @@ jobs:
     - run: npm run bootstrap
     - run: npm run eslint
     - run: npm run build
+    - run: mkdir __tests__/__image_snapshots__/chrome-docker/__diff_output__/
     - run: docker-compose up --build -d
     - run: node_modules/.bin/jest --ci --coverage true --maxWorkers=4 --no-watch
     - run: docker-compose down --rmi all
@@ -50,4 +51,4 @@ jobs:
       uses: actions/upload-artifact@v1.0.0
       with:
         name: image-snapshot-diff
-        path: __tests__/__image_snapshots__/chrome-docker/__diff_output__/        
+        path: __tests__/__image_snapshots__/chrome-docker/__diff_output__/
