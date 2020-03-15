@@ -13,6 +13,7 @@ jobs:
   build:
     env:
       CI: 1
+    
     runs-on: ubuntu-latest
 
     strategy:
@@ -32,10 +33,21 @@ jobs:
     - run: docker-compose up --build -d
     - run: node_modules/.bin/jest --ci --coverage true --maxWorkers=4 --no-watch
     - run: docker-compose down --rmi all
+
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
-        # Artifact name
         name: bundle
-        # Directory containing files to upload
         path: packages/bundle/dist/
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: coverage
+        path: coverage/
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: image-snapshot-diff
+        path: __tests__/__image_snapshots__/chrome-docker/__diff_output__/        
