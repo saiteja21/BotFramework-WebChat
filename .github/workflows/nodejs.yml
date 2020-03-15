@@ -27,7 +27,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: npm run bootstrap
-    - run: npm eslint
+    - run: npm run eslint
     - run: npm run build
     - run: docker-compose up --build -d
     - run: node_modules/.bin/jest --ci --coverage true --maxWorkers=4 --no-watch
