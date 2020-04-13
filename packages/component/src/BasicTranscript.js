@@ -9,6 +9,7 @@ import ScrollToEndButton from './Activity/ScrollToEndButton';
 import SpeakActivity from './Activity/Speak';
 import useActivities from './hooks/useActivities';
 import useDirection from './hooks/useDirection';
+import useLocalizer from './hooks/useLocalizer';
 import useRenderActivity from './hooks/useRenderActivity';
 import useRenderAttachment from './hooks/useRenderAttachment';
 import useStyleOptions from './hooks/useStyleOptions';
@@ -62,6 +63,7 @@ const BasicTranscript = ({ className }) => {
   const [{ hideScrollToEndButton }] = useStyleOptions();
   const [activities] = useActivities();
   const [direction] = useDirection();
+  const localize = useLocalizer();
   const renderAttachment = useRenderAttachment();
   const renderActivity = useRenderActivity(renderAttachment);
   const renderActivityElement = useCallback(
@@ -111,23 +113,26 @@ const BasicTranscript = ({ className }) => {
   );
 
   return (
-    <div className={classNames(ROOT_CSS + '', className + '')} dir={direction} role="log">
-      <ScrollToBottomPanel className={PANEL_CSS + ''}>
+    // Edge 44 and Narrator ignore aria-live="polite" both implicitly and explicitly set to role="log".
+    // We need to put aria-live to <ul> instead.
+    <div aria-live="off" className={classNames(ROOT_CSS + '', className + '')} dir={direction} role="log">
+      <ScrollToBottomPanel className={PANEL_CSS}>
         <div aria-hidden={true} className={FILLER_CSS} />
+        {/* Firefox 74 and Narrator ignore aria-live="polite" in role="log", <ul> and <div>. */}
         <ul
-          aria-atomic="false"
+          aria-atomic={false}
+          aria-label={localize('TRANSCRIPT_ALT')}
           aria-live="polite"
           aria-relevant="additions"
           className={classNames(LIST_CSS + '', activitiesStyleSet + '')}
-          role="list"
         >
           {activityElementsWithMetadata.map(({ activity, element, key, shouldSpeak }) => (
             <li
+              aria-atomic={true}
+              aria-label={activity.from.role === 'user' ? 'User message' : 'Bot message'}
               // Because of differences in browser implementations, aria-label=" " is used to make the screen reader not repeat the same text multiple times in Chrome v75 and Edge 44
-              aria-label=" "
               className={activityStyleSet + ''}
               key={key}
-              role="listitem"
             >
               {element}
               {shouldSpeak && <SpeakActivity activity={activity} />}

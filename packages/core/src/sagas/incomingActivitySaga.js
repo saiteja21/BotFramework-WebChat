@@ -1,11 +1,12 @@
-import { put, select } from 'redux-saga/effects';
+import { call, put, race, select, take } from 'redux-saga/effects';
 import updateIn from 'simple-update-in';
 
 import { ofType as activitiesOfType } from '../selectors/activities';
 import activityFromBot from '../definitions/activityFromBot';
-import incomingActivity from '../actions/incomingActivity';
-import observeEach from './effects/observeEach';
+import incomingActivity, { INCOMING_ACTIVITY } from '../actions/incomingActivity';
+import observeEvery from './effects/observeEvery';
 import setSuggestedActions from '../actions/setSuggestedActions';
+import sleep from '../utils/sleep';
 import whileConnected from './effects/whileConnected';
 
 function patchActivityWithFromRole(activity, userID) {
@@ -30,8 +31,34 @@ function patchActivityWithFromRole(activity, userID) {
 }
 
 function* observeActivity({ directLine, userID }) {
-  yield observeEach(directLine.activity$, function* observeActivity(activity) {
+  yield observeEvery(directLine.activity$, function* observeActivity(activity) {
     activity = patchActivityWithFromRole(activity, userID);
+
+    // In Direct Line, the bot reply often received before the read receipt of user request.
+    // This cause the transcript updated in a non-linear way.
+
+    // The solution is to hold on all incoming activities if the anticipating read receipt has not received.
+    // We will only hold activities for up to 300 ms.
+
+    if (activity.from.role !== 'user') {
+      yield race([
+        call(sleep, 300),
+        call(function*() {
+          for (;;) {
+            yield take(INCOMING_ACTIVITY);
+
+            const { activities } = yield select();
+            const { length: numPendingSend } = activities.filter(
+              ({ channelData: { state } = {}, from: { role } }) => role === 'user' && state === 'sending'
+            );
+
+            if (!numPendingSend) {
+              break;
+            }
+          }
+        })
+      ]);
+    }
 
     yield put(incomingActivity(activity));
 

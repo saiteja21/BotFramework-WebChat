@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import ScreenReaderText from '../../ScreenReaderText';
 
@@ -10,7 +10,7 @@ const AbsoluteTime = ({ value }) => {
   const localize = useLocalizer();
   const formatDate = useDateFormatter();
 
-  const absoluteTime = formatDate(value);
+  const absoluteTime = useMemo(() => formatDate(value), [value]);
 
   return (
     <React.Fragment>

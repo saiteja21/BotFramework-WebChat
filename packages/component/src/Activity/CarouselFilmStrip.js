@@ -4,7 +4,7 @@ import { css } from 'glamor';
 import { Context as FilmContext } from 'react-film';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useMemo } from 'react';
 import remarkStripMarkdown from '../Utils/remarkStripMarkdown';
 
 import Bubble from './Bubble';
@@ -116,15 +116,11 @@ const WebChatCarouselFilmStrip = ({
 
   const indented = fromUser ? bubbleFromUserNubSize : bubbleNubSize;
   const initials = fromUser ? userInitials : botInitials;
-  const plainText = remarkStripMarkdown(activityDisplayText);
-  const roleLabel = localize(fromUser ? 'CAROUSEL_ATTACHMENTS_USER_ALT' : 'CAROUSEL_ATTACHMENTS_BOT_ALT');
+  // Remove trailing dot because we will add it from ACTIVITY_*_SAID
+  const plainText = useMemo(() => (remarkStripMarkdown(text) + '').trim().replace(/\.$/u, ''), [text]);
+  const attachmentLabel = localize(fromUser ? 'CAROUSEL_ATTACHMENTS_USER_ALT' : 'CAROUSEL_ATTACHMENTS_BOT_ALT');
 
-  const ariaLabel = localize(
-    fromUser ? 'ACTIVITY_USER_SAID' : 'ACTIVITY_BOT_SAID',
-    initials,
-    plainText,
-    formatDate(timestamp)
-  ).trim();
+  const ariaLabel = localize(fromUser ? 'ACTIVITY_USER_SAID' : 'ACTIVITY_BOT_SAID', initials, plainText);
 
   return (
     <div
@@ -141,11 +137,11 @@ const WebChatCarouselFilmStrip = ({
       ref={scrollableRef}
       role="group"
     >
-      <ScreenReaderText text={ariaLabel} />
       {renderAvatar && <div className="webchat__carouselFilmStrip__avatar">{renderAvatar()}</div>}
-      <div className="content">
+      <div className="content" role="presentation">
+        <ScreenReaderText text={ariaLabel} />
         {!!activityDisplayText && (
-          <div className="message">
+          <div className="message" role="presentation">
             <Bubble aria-hidden={true} className="bubble" fromUser={fromUser} nub={true}>
               {children({
                 activity,
@@ -158,11 +154,10 @@ const WebChatCarouselFilmStrip = ({
             <div aria-hidden={true} className="filler" />
           </div>
         )}
+        {!!attachments.length && <ScreenReaderText text={attachmentLabel} />}
         <ul className={classNames({ webchat__carousel__item_indented: indented })} ref={itemContainerRef}>
           {attachments.map((attachment, index) => (
-            // Because of differences in browser implementations, aria-label=" " is used to make the screen reader not repeat the same text multiple times in Chrome v75 and Edge 44
-            <li aria-label=" " key={index}>
-              <ScreenReaderText text={roleLabel} />
+            <li aria-atomic={true} key={index}>
               <Bubble fromUser={fromUser} key={index} nub={false}>
                 {children({ attachment })}
               </Bubble>

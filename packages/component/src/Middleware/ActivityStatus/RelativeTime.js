@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import ScreenReaderText from '../../ScreenReaderText';
 import useDateFormatter from '../../hooks/useDateFormatter';
@@ -14,11 +14,13 @@ const RelativeTime = ({ value }) => {
   const formatRelativeTime = useRelativeTimeFormatter();
   const localize = useLocalizer();
 
+  const absoluteTime = useMemo(() => formatDate(value), [value]);
+
   useForceRenderAtInterval(value, TIMER_INTERVAL);
 
   return (
     <React.Fragment>
-      <ScreenReaderText text={localize('ACTIVITY_STATUS_SEND_STATUS_ALT_SENT_AT', formatDate(value))} />
+      <ScreenReaderText text={localize('ACTIVITY_STATUS_SEND_STATUS_ALT_SENT_AT', absoluteTime)} />
       <span aria-hidden={true}>{formatRelativeTime(value)}</span>
     </React.Fragment>
   );

@@ -13,23 +13,23 @@ const BasicConnectivityStatus = () => {
     return false;
   }
 
-  switch (connectivityStatus.message) {
-    case 'connecting':
-      return <ConnectivityStatusConnecting />;
+  const { message } = connectivityStatus;
 
-    case 'javascripterror':
-      return <ConnectivityStatusJavaScriptError />;
-
-    case 'failedtoconnect':
-      return <ConnectivityStatusFailedToConnect />;
-
-    case 'reconnecting':
-      return <ConnectivityStatusConnecting reconnect={true} />;
-
-    case 'connected':
-    default:
-      return <ConnectivityStatusConnected />;
-  }
+  return (
+    <div role="status">
+      {message === 'connecting' ? (
+        <ConnectivityStatusConnecting />
+      ) : message === 'javascripterror' ? (
+        <ConnectivityStatusJavaScriptError />
+      ) : message === 'failedtoconnect' ? (
+        <ConnectivityStatusFailedToConnect />
+      ) : message === 'reconnecting' ? (
+        <ConnectivityStatusConnecting reconnect={true} />
+      ) : (
+        <ConnectivityStatusConnected />
+      )}
+    </div>
+  );
 };
 
 export default BasicConnectivityStatus;

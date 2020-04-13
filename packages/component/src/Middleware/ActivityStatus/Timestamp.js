@@ -1,15 +1,22 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import AbsoluteTime from './AbsoluteTime';
 import RelativeTime from './RelativeTime';
+import ScreenReaderText from '../../ScreenReaderText';
+import useDateFormatter from '../../hooks/useDateFormatter';
+import useLocalizer from '../../hooks/useLocalizer';
 import useStyleOptions from '../../hooks/useStyleOptions';
 import useStyleSet from '../../hooks/useStyleSet';
 
-const Timestamp = ({ activity: { timestamp }, 'aria-hidden': ariaHidden, className }) => {
+const Timestamp = ({ activity: { timestamp }, className }) => {
   const [{ timestampFormat }] = useStyleOptions();
   const [{ timestamp: timestampStyleSet, sendStatus: sendStatusStyleSet }] = useStyleSet();
+  const formatDate = useDateFormatter();
+  const localize = useLocalizer();
+
+  const absoluteTime = useMemo(() => formatDate(timestamp), [timestamp]);
 
   timestampStyleSet &&
     console.warn(
@@ -19,17 +26,19 @@ const Timestamp = ({ activity: { timestamp }, 'aria-hidden': ariaHidden, classNa
   return (
     !!timestamp && (
       <span
-        aria-hidden={ariaHidden}
         className={classNames((timestampStyleSet || '') + '', (sendStatusStyleSet || '') + '', (className || '') + '')}
+        role="presentation"
       >
-        {timestampFormat === 'relative' ? <RelativeTime value={timestamp} /> : <AbsoluteTime value={timestamp} />}
+        <ScreenReaderText text={localize('ACTIVITY_STATUS_SEND_STATUS_ALT_SENT_AT', absoluteTime)} />
+        <span aria-hidden={true} role="presentation">
+          {timestampFormat === 'relative' ? <RelativeTime value={timestamp} /> : <AbsoluteTime value={timestamp} />}
+        </span>
       </span>
     )
   );
 };
 
 Timestamp.defaultProps = {
-  'aria-hidden': false,
   className: ''
 };
 
@@ -37,7 +46,6 @@ Timestamp.propTypes = {
   activity: PropTypes.shape({
     timestamp: PropTypes.string.isRequired
   }).isRequired,
-  'aria-hidden': PropTypes.bool,
   className: PropTypes.string
 };
 

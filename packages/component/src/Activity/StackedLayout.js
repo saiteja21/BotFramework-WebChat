@@ -4,7 +4,7 @@
 import { css } from 'glamor';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useMemo } from 'react';
 import remarkStripMarkdown from '../Utils/remarkStripMarkdown';
 
 import Bubble from './Bubble';
@@ -87,7 +87,7 @@ const StackedLayout = ({ activity, children, nextVisibleActivity }) => {
   const [{ bubbleNubSize, bubbleFromUserNubSize }] = useStyleOptions();
   const [{ stackedLayout: stackedLayoutStyleSet }] = useStyleSet();
   const [direction] = useDirection();
-  const formatDate = useDateFormatter();
+  const dateFormat = useDateFormatter();
   const localize = useLocalizer();
   const renderActivityStatus = useRenderActivityStatus({ activity, nextVisibleActivity });
   const renderAvatar = useRenderAvatar({ activity });
@@ -104,20 +104,20 @@ const StackedLayout = ({ activity, children, nextVisibleActivity }) => {
   const activityDisplayText = messageBackDisplayText || text;
   const fromUser = role === 'user';
 
+  const absoluteTime = useMemo(() => dateFormat(timestamp), [timestamp]);
   const indented = fromUser ? bubbleFromUserNubSize : bubbleNubSize;
   const initials = fromUser ? userInitials : botInitials;
-  const plainText = remarkStripMarkdown(text);
-  const roleLabel = localize(fromUser ? 'CAROUSEL_ATTACHMENTS_USER_ALT' : 'CAROUSEL_ATTACHMENTS_BOT_ALT');
+  // Remove trailing dot because we will add it from ACTIVITY_*_SAID
+  const plainText = useMemo(() => (remarkStripMarkdown(activityDisplayText) + '').trim().replace(/\.$/u, ''), [
+    activityDisplayText
+  ]);
+  const attachmentLabel = localize(fromUser ? 'CAROUSEL_ATTACHMENTS_USER_ALT' : 'CAROUSEL_ATTACHMENTS_BOT_ALT');
 
-  const ariaLabel = localize(
-    fromUser ? 'ACTIVITY_USER_SAID' : 'ACTIVITY_BOT_SAID',
-    initials,
-    plainText,
-    formatDate(timestamp)
-  ).trim();
+  const ariaLabel = localize(fromUser ? 'ACTIVITY_USER_SAID' : 'ACTIVITY_BOT_SAID', initials, plainText);
 
   return (
     <div
+      aria-atomic={true}
       className={classNames(
         ROOT_CSS + '',
         stackedLayoutStyleSet + '',
@@ -134,11 +134,15 @@ const StackedLayout = ({ activity, children, nextVisibleActivity }) => {
           'webchat__stackedLayout--hasAvatar': renderAvatar && !!(fromUser ? bubbleFromUserNubSize : bubbleNubSize)
         }
       )}
-      role="region"
+      role="group"
     >
-      <ScreenReaderText text={ariaLabel} />
-      {renderAvatar && <div className="webchat__stackedLayout__avatar">{renderAvatar()}</div>}
-      <div className="webchat__stackedLayout__content">
+      {renderAvatar && (
+        <div aria-hidden={true} className="webchat__stackedLayout__avatar">
+          {renderAvatar()}
+        </div>
+      )}
+      <div className="webchat__stackedLayout__content" role="presentation">
+        <ScreenReaderText text={ariaLabel} />
         {!!activityDisplayText && (
           <div aria-hidden={true} className="webchat__row message">
             <Bubble className="bubble" fromUser={fromUser} nub={!!indented}>
@@ -150,23 +154,21 @@ const StackedLayout = ({ activity, children, nextVisibleActivity }) => {
                 }
               })}
             </Bubble>
-            <div className="filler" />
+            <div aria-hidden={true} className="filler" />
           </div>
         )}
+        {!!attachments.length && <ScreenReaderText text={attachmentLabel} />}
         {attachments.map((attachment, index) => (
-          // Because of differences in browser implementations, aria-label=" " is used to make the screen reader not repeat the same text multiple times in Chrome v75 and Edge 44
           <div
-            aria-label=" "
             className={classNames('webchat__row attachment', { webchat__stacked_item_indented: indented })}
             key={index}
           >
-            <ScreenReaderText text={roleLabel} />
             <Bubble className="attachment bubble" fromUser={fromUser} key={index} nub={false}>
               {children({ attachment })}
             </Bubble>
           </div>
         ))}
-        <div className={classNames('webchat__row', { webchat__stacked_item_indented: indented })}>
+        <div className={classNames('webchat__row', { webchat__stacked_item_indented: indented })} role="presentation">
           {renderActivityStatus()}
           <div aria-hidden={true} className="filler" />
         </div>

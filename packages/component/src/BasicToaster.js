@@ -138,7 +138,7 @@ const BasicToaster = () => {
       {(!expandable || expanded) && (
         <ul aria-labelledby={headerElementId} className="webchat__toaster__list" id={expandableElementId} role="region">
           {sortedNotificationsWithChildren.map(({ children, notification: { id } }) => (
-            <li aria-atomic={true} className="webchat__toaster__listItem" key={id} role="none">
+            <li aria-atomic={true} className="webchat__toaster__listItem" key={id} role="presentation">
               {children}
             </li>
           ))}

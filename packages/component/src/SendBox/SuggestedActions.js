@@ -53,9 +53,11 @@ const SuggestedActions = ({ className, suggestedActions = [] }) => {
       : localize('SUGGESTED_ACTIONS_ALT_NO_CONTENT')
   );
 
+  const ariaOrientation = suggestedActionLayout === 'stacked' ? undefined : 'horizontal';
+
   if (!suggestedActions.length) {
     return (
-      <div aria-label=" " aria-live="polite" role="status">
+      <div aria-live="polite" aria-orientation={ariaOrientation} role="menu">
         <ScreenReaderText text={suggestedActionsContainerText} />
       </div>
     );
@@ -76,9 +78,13 @@ const SuggestedActions = ({ className, suggestedActions = [] }) => {
 
   if (suggestedActionLayout === 'stacked') {
     return (
-      <div aria-label=" " aria-live="polite" role="status">
+      <div aria-live="polite" aria-orientation={ariaOrientation} role="menu">
         <ScreenReaderText text={suggestedActionsContainerText} />
-        <div className={classNames(suggestedActionsStyleSet + '', SUGGESTED_ACTION_STACKED_CSS + '', className + '')}>
+        <div
+          aria-atomic={true}
+          className={classNames(suggestedActionsStyleSet + '', SUGGESTED_ACTION_STACKED_CSS + '', className + '')}
+          role="presentation"
+        >
           {children}
         </div>
       </div>
@@ -86,18 +92,20 @@ const SuggestedActions = ({ className, suggestedActions = [] }) => {
   }
 
   return (
-    <div aria-label=" " aria-live="polite" role="status">
+    <div aria-live="polite" aria-orientation={ariaOrientation} role="menu">
       <ScreenReaderText text={suggestedActionsContainerText} />
-      <BasicFilm
-        autoCenter={false}
-        className={classNames(suggestedActionsStyleSet + '', className + '')}
-        dir={direction}
-        flipperBlurFocusOnClick={true}
-        showDots={false}
-        styleSet={suggestedActionsStyleSetForReactFilm}
-      >
-        {children}
-      </BasicFilm>
+      <div aria-atomic={true} role="presentation">
+        <BasicFilm
+          autoCenter={false}
+          className={classNames(suggestedActionsStyleSet + '', className + '')}
+          dir={direction}
+          flipperBlurFocusOnClick={true}
+          showDots={false}
+          styleSet={suggestedActionsStyleSetForReactFilm}
+        >
+          {children}
+        </BasicFilm>
+      </div>
     </div>
   );
 };

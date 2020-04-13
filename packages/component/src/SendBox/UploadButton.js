@@ -115,7 +115,7 @@ const UploadButton = () => {
         multiple={true}
         onChange={handleFileChange}
         ref={inputRef}
-        role="button"
+        role="presentation"
         tabIndex={-1}
         type="file"
       />

@@ -38,8 +38,7 @@ const SendStatus = ({ activity, sendState }) => {
   const postActivity = usePostActivity();
 
   const sendingText = localize('ACTIVITY_STATUS_SEND_STATUS_ALT_SENDING');
-
-  const label = localize('ACTIVITY_STATUS_SEND_STATUS_ALT', sendingText);
+  const label = localize('ACTIVITY_STATUS_SEND_STATUS_ALT', '');
 
   const handleRetryClick = useCallback(() => {
     postActivity(activity);
@@ -52,7 +51,7 @@ const SendStatus = ({ activity, sendState }) => {
   return (
     <React.Fragment>
       <ScreenReaderText text={label} />
-      <span aria-hidden={true} className={sendStatusStyleSet}>
+      <span aria-atomic={true} className={sendStatusStyleSet} role="presentation">
         {sendState === SENDING ? (
           sendingText
         ) : sendState === SEND_FAILED ? (
