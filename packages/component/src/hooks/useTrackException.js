@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 
-import createCustomEvent from '../Utils/createCustomEvent';
 import useReadTelemetryDimensions from './internal/useReadTelemetryDimensions';
 import useWebChatUIContext from './internal/useWebChatUIContext';
 
@@ -17,13 +16,12 @@ export default function useTrackException() {
       }
 
       onTelemetry &&
-        onTelemetry(
-          createCustomEvent('exception', {
-            dimensions: { ...readTelemetryDimensions() },
-            error,
-            fatal: !!fatal
-          })
-        );
+        onTelemetry({
+          dimensions: { ...readTelemetryDimensions() },
+          error,
+          fatal: !!fatal,
+          type: 'exception'
+        });
     },
     [onTelemetry, readTelemetryDimensions]
   );

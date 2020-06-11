@@ -3,7 +3,7 @@
 import { call, cancel, cancelled, fork, put, race, take } from 'redux-saga/effects';
 
 import { ConnectionStatus } from 'botframework-directlinejs';
-import { decode } from 'jsonwebtoken';
+import { Base64 } from 'js-base64';
 
 import { CONNECT } from '../actions/connect';
 import createPromiseQueue from '../createPromiseQueue';
@@ -12,7 +12,6 @@ import uniqueID from '../utils/uniqueID';
 import updateConnectionStatus, { UPDATE_CONNECTION_STATUS } from '../actions/updateConnectionStatus';
 
 import { DISCONNECT, DISCONNECT_PENDING, DISCONNECT_FULFILLED } from '../actions/disconnect';
-
 import { RECONNECT } from '../actions/reconnect';
 
 const { Connecting: CONNECTING, Online: ONLINE, Uninitialized: UNINITIALIZED } = ConnectionStatus;
@@ -36,10 +35,23 @@ function* observeAndPutConnectionStatusUpdate(directLine) {
   }
 }
 
+function tryParseJSON(json) {
+  try {
+    return JSON.parse(json);
+    /* eslint-disable-next-line no-empty */
+  } catch (err) {}
+}
+
+function decodeJWTPayload(token) {
+  const [_, payload] = token.split('.');
+
+  return payload && tryParseJSON(Base64.decode(payload));
+}
+
 // TODO: [P2] We should move this check and rectification to DirectLineJS.
 function rectifyUserID(directLine, userIDFromAction) {
   const { token } = directLine;
-  const { user: userIDFromToken } = decode(token) || {};
+  const { user: userIDFromToken } = (token && decodeJWTPayload(token)) || {};
 
   if (userIDFromToken) {
     if (userIDFromAction && userIDFromAction !== userIDFromToken) {
@@ -64,8 +76,6 @@ function rectifyUserID(directLine, userIDFromAction) {
   } else {
     return randomUserID();
   }
-
-  return userIDFromAction;
 }
 
 // We could make this a Promise instead of saga (function generator) to make the code cleaner, if:

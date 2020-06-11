@@ -9,5 +9,5 @@ function prettierMarkdown(filenames) {
 module.exports = {
   '{__tests__,samples}/**/*.{html,js,jsx,ts,tsx}': prettierCode,
   '**/*.md': prettierMarkdown,
-  'packages/{bundle,component,core,embed,playground}/src/**/*.{js,jsx,ts,tsx}': prettierCode
+  'packages/{bundle,component,core,dom,embed,playground}/src/**/*.{js,jsx,ts,tsx}': prettierCode
 };

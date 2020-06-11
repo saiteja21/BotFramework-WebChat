@@ -1,6 +1,6 @@
 /* eslint no-magic-numbers: ["error", { "ignore": [-1, 0, 2] }] */
 
-import { Components, getTabIndex, hooks } from 'botframework-webchat-component';
+import { Components, getTabIndex, hooks } from 'botframework-webchat-dom';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';

@@ -14,7 +14,7 @@ import createCognitiveServicesSpeechServicesPonyfillFactory from './createCognit
 import createDirectLineSpeechAdapters from './createDirectLineSpeechAdapters';
 import createStyleSet from './createFullStyleSet';
 import defaultCreateDirectLine from './createDirectLine';
-import FullComposer from './FullComposer';
+import FullDOMComposer from './FullDOMComposer';
 import HeroCardContent from './adaptiveCards/Attachment/HeroCardContent';
 import OAuthCardContent from './adaptiveCards/Attachment/OAuthCardContent';
 import ReactWebChat from './FullReactWebChat';
@@ -47,7 +47,7 @@ const Components = {
   AdaptiveCardContent,
   AudioCardContent,
   AnimationCardContent,
-  Composer: FullComposer,
+  DOMComposer: FullDOMComposer,
   HeroCardContent,
   OAuthCardContent,
   ReceiptCardContent,

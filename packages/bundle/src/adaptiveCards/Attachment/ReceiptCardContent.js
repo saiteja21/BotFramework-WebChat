@@ -1,6 +1,6 @@
 /* eslint no-magic-numbers: ["error", { "ignore": [0, 1, 10, 15, 25, 75] }] */
 
-import { hooks } from 'botframework-webchat-component';
+import { hooks } from 'botframework-webchat-dom';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 

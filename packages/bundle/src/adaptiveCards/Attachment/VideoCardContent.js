@@ -1,6 +1,6 @@
 /* eslint react/no-array-index-key: "off" */
 
-import { Components, hooks } from 'botframework-webchat-component';
+import { Components, hooks } from 'botframework-webchat-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 

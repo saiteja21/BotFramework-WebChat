@@ -1,8 +1,7 @@
-import useStyleSet from './useStyleSet';
+import useWebChatUIContext from './internal/useWebChatUIContext';
 
 export default function useStyleOptions() {
-  // Today, the "styleSet.options" is patched with missing values and "styleOptions" are unpatched.
-  // Thus, we are using the "styleSet.options" version for now.
+  const { styleOptionsState } = useWebChatUIContext();
 
-  return [useStyleSet()[0].options];
+  return styleOptionsState;
 }

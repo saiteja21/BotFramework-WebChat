@@ -1,24 +1,32 @@
 /* eslint no-magic-numbers: ["error", { "ignore": [0, 1024] }] */
 
+// TODO: [RN] Fix downscaleImageToDataURL in React Native
+/* eslint no-unused-vars: "off" */
+/* eslint require-await: "off" */
+/* eslint react-hooks/exhaustive-deps: "off" */
+
 import { useCallback } from 'react';
 
-import downscaleImageToDataURL from '../Utils/downscaleImageToDataURL';
+// TODO: [RN] Fix downscaleImageToDataURL in React Native
+// import downscaleImageToDataURL from '../Utils/downscaleImageToDataURL';
 import useStyleOptions from '../hooks/useStyleOptions';
 import useTrackEvent from '../hooks/useTrackEvent';
 import useTrackTiming from '../hooks/useTrackTiming';
 import useWebChatUIContext from './internal/useWebChatUIContext';
 
-function canMakeThumbnail({ name }) {
-  return /\.(gif|jpe?g|png)$/iu.test(name);
-}
+// TODO: [RN] Fix downscaleImageToDataURL in React Native
+// function canMakeThumbnail({ name }) {
+//   return /\.(gif|jpe?g|png)$/iu.test(name);
+// }
 
-async function makeThumbnail(file, width, height, contentType, quality) {
-  try {
-    return await downscaleImageToDataURL(file, width, height, contentType, quality);
-  } catch (error) {
-    console.warn(`Web Chat: Failed to downscale image due to ${error}.`);
-  }
-}
+// TODO: [RN] Fix downscaleImageToDataURL in React Native
+// async function makeThumbnail(file, width, height, contentType, quality) {
+//   try {
+//     return await downscaleImageToDataURL(file, width, height, contentType, quality);
+//   } catch (error) {
+//     console.warn(`Web Chat: Failed to downscale image due to ${error}.`);
+//   }
+// }
 
 export default function useSendFiles() {
   const { sendFiles } = useWebChatUIContext();
@@ -46,18 +54,19 @@ export default function useSendFiles() {
           [].map.call(files, async file => {
             let thumbnail;
 
-            if (enableUploadThumbnail && canMakeThumbnail(file)) {
-              thumbnail = await trackTiming(
-                'sendFiles:makeThumbnail',
-                makeThumbnail(
-                  file,
-                  uploadThumbnailWidth,
-                  uploadThumbnailHeight,
-                  uploadThumbnailContentType,
-                  uploadThumbnailQuality
-                )
-              );
-            }
+            // TODO: [RN] Fix downscaleImageToDataURL in React Native
+            // if (enableUploadThumbnail && canMakeThumbnail(file)) {
+            //   thumbnail = await trackTiming(
+            //     'sendFiles:makeThumbnail',
+            //     makeThumbnail(
+            //       file,
+            //       uploadThumbnailWidth,
+            //       uploadThumbnailHeight,
+            //       uploadThumbnailContentType,
+            //       uploadThumbnailQuality
+            //     )
+            //   );
+            // }
 
             return {
               name: file.name,

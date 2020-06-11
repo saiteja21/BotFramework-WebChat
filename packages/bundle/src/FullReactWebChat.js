@@ -1,4 +1,4 @@
-import BasicWebChat from 'botframework-webchat-component';
+import BasicWebChat from 'botframework-webchat-dom';
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 

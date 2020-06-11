@@ -1,17 +1,10 @@
 import { Composer as SayComposer } from 'react-say';
-import {
-  Composer as ScrollToBottomComposer,
-  FunctionContext as ScrollToBottomFunctionContext
-} from 'react-scroll-to-bottom';
 
-import { css } from 'glamor';
 import { Provider } from 'react-redux';
-import MarkdownIt from 'markdown-it';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import updateIn from 'simple-update-in';
 
-import createCustomEvent from './Utils/createCustomEvent';
 import ErrorBoundary from './ErrorBoundary';
 import getAllLocalizedStrings from './Localization/getAllLocalizedStrings';
 import isObject from './Utils/isObject';
@@ -47,14 +40,9 @@ import {
   submitSendBox
 } from 'botframework-webchat-core';
 
-import addTargetBlankToHyperlinksMarkdown from './Utils/addTargetBlankToHyperlinksMarkdown';
-import concatMiddleware from './Middleware/concatMiddleware';
-import createCoreCardActionMiddleware from './Middleware/CardAction/createCoreMiddleware';
-import createStyleSet from './Styles/createStyleSet';
 import defaultSelectVoice from './defaultSelectVoice';
 import Dictation from './Dictation';
 import mapMap from './Utils/mapMap';
-import observableToPromise from './Utils/observableToPromise';
 import Tracker from './Tracker';
 import WebChatReduxContext, { useDispatch } from './WebChatReduxContext';
 import WebChatUIContext from './WebChatUIContext';
@@ -87,44 +75,6 @@ const DISPATCHERS = {
   stopSpeakingActivity,
   submitSendBox
 };
-
-function styleSetToClassNames(styleSet) {
-  return mapMap(styleSet, (style, key) => (key === 'options' ? style : css(style)));
-}
-
-function createCardActionContext({ cardActionMiddleware, directLine, dispatch }) {
-  const runMiddleware = concatMiddleware(cardActionMiddleware, createCoreCardActionMiddleware())({ dispatch });
-
-  return {
-    onCardAction: (cardAction, { target } = {}) =>
-      runMiddleware(({ cardAction: { type } }) => {
-        throw new Error(`Web Chat: received unknown card action "${type}"`);
-      })({
-        cardAction,
-        getSignInUrl:
-          cardAction.type === 'signin'
-            ? () => {
-                const { value } = cardAction;
-
-                if (directLine.getSessionId) {
-                  // TODO: [P3] We should change this one to async/await.
-                  //       This is the first place in this project to use async.
-                  //       Thus, we need to add @babel/plugin-transform-runtime and @babel/runtime.
-
-                  return observableToPromise(directLine.getSessionId()).then(
-                    sessionId => `${value}${encodeURIComponent(`&code_challenge=${sessionId}`)}`
-                  );
-                }
-
-                console.warn('botframework-webchat: OAuth is not supported on this Direct Line adapter.');
-
-                return value;
-              }
-            : null,
-        target
-      })
-  };
-}
 
 function createFocusContext({ mainFocusRef, sendBoxRef }) {
   return {
@@ -177,12 +127,10 @@ const Composer = ({
   activityStatusRenderer,
   attachmentRenderer,
   avatarRenderer,
-  cardActionMiddleware,
   children,
   dir,
   directLine,
   disabled,
-  extraStyleSet,
   grammars,
   groupTimestamp,
   locale,
@@ -190,13 +138,11 @@ const Composer = ({
   onTelemetry,
   overrideLocalizedStrings,
   renderMarkdown,
-  scrollToEnd,
   selectVoice,
   sendBoxRef,
   sendTimeout,
   sendTypingIndicator,
   styleOptions,
-  styleSet,
   toastRenderer,
   typingIndicatorRenderer,
   userID,
@@ -210,34 +156,6 @@ const Composer = ({
 
   const patchedDir = useMemo(() => (dir === 'ltr' || dir === 'rtl' ? dir : 'auto'), [dir]);
   const patchedGrammars = useMemo(() => grammars || [], [grammars]);
-
-  const patchedStyleOptions = useMemo(() => {
-    const patchedStyleOptions = { ...styleOptions };
-
-    if (typeof groupTimestamp !== 'undefined' && typeof patchedStyleOptions.groupTimestamp === 'undefined') {
-      console.warn(
-        'Web Chat: "groupTimestamp" has been moved to "styleOptions". This deprecation migration will be removed on or after January 1 2022.'
-      );
-
-      patchedStyleOptions.groupTimestamp = groupTimestamp;
-    }
-
-    if (typeof sendTimeout !== 'undefined' && typeof patchedStyleOptions.sendTimeout === 'undefined') {
-      console.warn(
-        'Web Chat: "sendTimeout" has been moved to "styleOptions". This deprecation migration will be removed on or after January 1 2022.'
-      );
-
-      patchedStyleOptions.sendTimeout = sendTimeout;
-    }
-
-    if (styleOptions.slowConnectionAfter < 0) {
-      console.warn('Web Chat: "slowConnectionAfter" cannot be negative, will set to 0.');
-
-      patchedStyleOptions.slowConnectionAfter = 0;
-    }
-
-    return patchedStyleOptions;
-  }, [groupTimestamp, sendTimeout, styleOptions]);
 
   useEffect(() => {
     dispatch(setLanguage(locale));
@@ -266,36 +184,39 @@ const Composer = ({
     };
   }, [dispatch, directLine, userID, username]);
 
-  const internalMarkdownIt = useMemo(() => new MarkdownIt(), []);
+  const patchedStyleOptions = useMemo(() => {
+    const patchedStyleOptions = { ...styleOptions };
 
-  const internalRenderMarkdownInline = useMemo(
-    () => markdown => {
-      const tree = internalMarkdownIt.parseInline(markdown);
+    if (typeof groupTimestamp !== 'undefined' && typeof patchedStyleOptions.groupTimestamp === 'undefined') {
+      console.warn(
+        'Web Chat: "groupTimestamp" has been moved to "styleOptions". This deprecation migration will be removed on or after January 1 2022.'
+      );
 
-      // We should add rel="noopener noreferrer" and target="_blank"
-      const patchedTree = addTargetBlankToHyperlinksMarkdown(tree);
+      patchedStyleOptions.groupTimestamp = groupTimestamp;
+    }
 
-      return internalMarkdownIt.renderer.render(patchedTree);
-    },
-    [internalMarkdownIt]
-  );
+    if (typeof sendTimeout !== 'undefined' && typeof patchedStyleOptions.sendTimeout === 'undefined') {
+      console.warn(
+        'Web Chat: "sendTimeout" has been moved to "styleOptions". This deprecation migration will be removed on or after January 1 2022.'
+      );
 
-  const cardActionContext = useMemo(() => createCardActionContext({ cardActionMiddleware, directLine, dispatch }), [
-    cardActionMiddleware,
-    directLine,
-    dispatch
-  ]);
+      patchedStyleOptions.sendTimeout = sendTimeout;
+    }
+
+    if (styleOptions && styleOptions.slowConnectionAfter < 0) {
+      console.warn('Web Chat: "slowConnectionAfter" cannot be negative, will set to 0.');
+
+      patchedStyleOptions.slowConnectionAfter = 0;
+    }
+
+    return patchedStyleOptions;
+  }, [groupTimestamp, sendTimeout, styleOptions]);
 
   const patchedSelectVoice = useCallback(selectVoice || defaultSelectVoice.bind(null, { language: locale }), [
     selectVoice
   ]);
 
   const focusContext = useMemo(() => createFocusContext({ mainFocusRef, sendBoxRef }), [mainFocusRef, sendBoxRef]);
-
-  const patchedStyleSet = useMemo(
-    () => styleSetToClassNames({ ...(styleSet || createStyleSet(patchedStyleOptions)), ...extraStyleSet }),
-    [extraStyleSet, patchedStyleOptions, styleSet]
-  );
 
   const hoistedDispatchers = useMemo(
     () => mapMap(DISPATCHERS, dispatcher => (...args) => dispatch(dispatcher(...args))),
@@ -349,6 +270,27 @@ const Composer = ({
     [telemetryDimensionsRef]
   );
 
+  const scrollToEndListenersRef = useRef([]);
+
+  const addScrollToEndListener = useCallback(
+    listener => {
+      if (typeof listener !== 'function') {
+        throw new Error('A listener function must be passed to addScrollToEndListener().');
+      }
+
+      scrollToEndListenersRef.current = [...scrollToEndListenersRef.current, listener];
+
+      return () => {
+        scrollToEndListenersRef.current = scrollToEndListenersRef.current.filter(current => current !== listener);
+      };
+    },
+    [scrollToEndListenersRef]
+  );
+
+  const scrollToEnd = useCallback(() => scrollToEndListenersRef.current.forEach(listener => listener()), [
+    scrollToEndListenersRef
+  ]);
+
   // This is a heavy function, and it is expected to be only called when there is a need to recreate business logic, e.g.
   // - User ID changed, causing all send* functions to be updated
   // - send
@@ -362,11 +304,11 @@ const Composer = ({
   //       i.e. members that are not interested in other types of UIs
   const context = useMemo(
     () => ({
-      ...cardActionContext,
       ...focusContext,
       ...hoistedDispatchers,
       activityRenderer,
       activityStatusRenderer,
+      addScrollToEndListener,
       attachmentRenderer,
       avatarRenderer,
       dictateAbortable,
@@ -374,8 +316,6 @@ const Composer = ({
       directLine,
       disabled,
       grammars: patchedGrammars,
-      internalMarkdownItState: [internalMarkdownIt],
-      internalRenderMarkdownInline,
       language: locale,
       localizedGlobalizeState: [localizedGlobalize],
       localizedStrings: patchedLocalizedStrings,
@@ -386,9 +326,8 @@ const Composer = ({
       sendBoxRef,
       sendTypingIndicator,
       setDictateAbortable,
+      styleOptionsState: [patchedStyleOptions],
       trackDimension,
-      styleOptions,
-      styleSet: patchedStyleSet,
       telemetryDimensionsRef,
       toastRenderer,
       typingIndicatorRenderer,
@@ -399,16 +338,14 @@ const Composer = ({
     [
       activityRenderer,
       activityStatusRenderer,
+      addScrollToEndListener,
       attachmentRenderer,
       avatarRenderer,
-      cardActionContext,
       dictateAbortable,
       directLine,
       disabled,
       focusContext,
       hoistedDispatchers,
-      internalMarkdownIt,
-      internalRenderMarkdownInline,
       locale,
       localizedGlobalize,
       onTelemetry,
@@ -416,14 +353,13 @@ const Composer = ({
       patchedGrammars,
       patchedLocalizedStrings,
       patchedSelectVoice,
-      sendTypingIndicator,
-      patchedStyleSet,
-      renderMarkdown,
+      patchedStyleOptions,
       scrollToEnd,
+      sendTypingIndicator,
+      renderMarkdown,
       sendBoxRef,
       setDictateAbortable,
       trackDimension,
-      styleOptions,
       telemetryDimensionsRef,
       toastRenderer,
       typingIndicatorRenderer,
@@ -448,7 +384,7 @@ const Composer = ({
 const ComposeWithStore = ({ onTelemetry, store, ...props }) => {
   const handleError = useCallback(
     ({ error }) => {
-      onTelemetry && onTelemetry(createCustomEvent('exception', { error, fatal: true }));
+      onTelemetry && onTelemetry({ error, fatal: true, type: 'exception' });
     },
     [onTelemetry]
   );
@@ -458,11 +394,7 @@ const ComposeWithStore = ({ onTelemetry, store, ...props }) => {
   return (
     <ErrorBoundary onError={handleError}>
       <Provider context={WebChatReduxContext} store={memoizedStore}>
-        <ScrollToBottomComposer>
-          <ScrollToBottomFunctionContext.Consumer>
-            {({ scrollToEnd }) => <Composer onTelemetry={onTelemetry} scrollToEnd={scrollToEnd} {...props} />}
-          </ScrollToBottomFunctionContext.Consumer>
-        </ScrollToBottomComposer>
+        <Composer onTelemetry={onTelemetry} {...props} />
       </Provider>
     </ErrorBoundary>
   );
@@ -490,11 +422,9 @@ Composer.defaultProps = {
   activityStatusRenderer: undefined,
   attachmentRenderer: undefined,
   avatarRenderer: undefined,
-  cardActionMiddleware: undefined,
   children: undefined,
   dir: 'auto',
   disabled: false,
-  extraStyleSet: undefined,
   grammars: [],
   groupTimestamp: undefined,
   locale: window.navigator.language || 'en-US',
@@ -506,8 +436,7 @@ Composer.defaultProps = {
   sendBoxRef: undefined,
   sendTimeout: undefined,
   sendTypingIndicator: false,
-  styleOptions: {},
-  styleSet: undefined,
+  styleOptions: undefined,
   toastRenderer: undefined,
   typingIndicatorRenderer: undefined,
   userID: '',
@@ -520,7 +449,6 @@ Composer.propTypes = {
   activityStatusRenderer: PropTypes.func,
   attachmentRenderer: PropTypes.func,
   avatarRenderer: PropTypes.func,
-  cardActionMiddleware: PropTypes.func,
   children: PropTypes.any,
   dir: PropTypes.oneOf(['auto', 'ltr', 'rtl']),
   directLine: PropTypes.shape({
@@ -537,7 +465,6 @@ Composer.propTypes = {
     token: PropTypes.string
   }).isRequired,
   disabled: PropTypes.bool,
-  extraStyleSet: PropTypes.any,
   grammars: PropTypes.arrayOf(PropTypes.string),
   groupTimestamp: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
   locale: PropTypes.string,
@@ -547,7 +474,6 @@ Composer.propTypes = {
   onTelemetry: PropTypes.func,
   overrideLocalizedStrings: PropTypes.oneOfType([PropTypes.any, PropTypes.func]),
   renderMarkdown: PropTypes.func,
-  scrollToEnd: PropTypes.func.isRequired,
   selectVoice: PropTypes.func,
   sendBoxRef: PropTypes.shape({
     current: PropTypes.any
@@ -555,7 +481,6 @@ Composer.propTypes = {
   sendTimeout: PropTypes.number,
   sendTypingIndicator: PropTypes.bool,
   styleOptions: PropTypes.any,
-  styleSet: PropTypes.any,
   toastRenderer: PropTypes.func,
   typingIndicatorRenderer: PropTypes.func,
   userID: PropTypes.string,

@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 
-import { checkSupport as supportWorker } from '../../Utils/downscaleImageToDataURLUsingWorker';
+// TODO: Fix checkSupport in React Native, may be a different architecture for workers
+// import { checkSupport as supportWorker } from '../../Utils/downscaleImageToDataURLUsingWorker';
+
 import { speechSynthesis } from '../../Speech/BypassSpeechSynthesisPonyfill';
 import useLanguage from '../useLanguage';
 import useTrackDimension from '../useTrackDimension';
@@ -39,9 +41,10 @@ function useTracker() {
     trackDimension('prop:speechSynthesis', !!speechSynthesisCapability + '');
   }, [trackDimension, speechSynthesisCapability]);
 
-  useEffect(() => {
-    trackDimension('capability:downscaleImage:workerType', supportWorker() ? 'web worker' : 'main');
-  }, [trackDimension]);
+  // TODO: Fix checkSupport in React Native
+  // useEffect(() => {
+  //   trackDimension('capability:downscaleImage:workerType', supportWorker() ? 'web worker' : 'main');
+  // }, [trackDimension]);
 
   useEffect(() => {
     trackEvent('init');

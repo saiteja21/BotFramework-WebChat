@@ -1,4 +1,4 @@
-import { hooks } from 'botframework-webchat-component';
+import { hooks } from 'botframework-webchat-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 

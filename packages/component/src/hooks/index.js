@@ -47,7 +47,6 @@ import useShouldSpeakIncomingActivity from './useShouldSpeakIncomingActivity';
 import useStartDictate from './useStartDictate';
 import useStopDictate from './useStopDictate';
 import useStyleOptions from './useStyleOptions';
-import useStyleSet from './useStyleSet';
 import useSubmitSendBox from './useSubmitSendBox';
 import useSuggestedActions from './useSuggestedActions';
 import useTimeoutForSend from './useTimeoutForSend';
@@ -59,11 +58,6 @@ import useUserID from './useUserID';
 import useUsername from './useUsername';
 import useVoiceSelector from './useVoiceSelector';
 import useWebSpeechPonyfill from './useWebSpeechPonyfill';
-
-import { useMicrophoneButtonClick, useMicrophoneButtonDisabled } from '../SendBox/MicrophoneButton';
-import { useSendBoxSpeechInterimsVisible } from '../BasicSendBox';
-import { useTextBoxSubmit, useTextBoxValue } from '../SendBox/TextBox';
-import { useTypingIndicatorVisible } from '../BasicTypingIndicator';
 
 export {
   useActiveTyping,
@@ -90,8 +84,6 @@ export {
   useLocalizeDate,
   useLocalizer,
   useMarkActivityAsSpoken,
-  useMicrophoneButtonClick,
-  useMicrophoneButtonDisabled,
   usePerformCardAction,
   usePostActivity,
   useReferenceGrammarID,
@@ -104,7 +96,6 @@ export {
   useRenderToast,
   useRenderTypingIndicator,
   useScrollToEnd,
-  useSendBoxSpeechInterimsVisible,
   useSendBoxValue,
   useSendEvent,
   useSendFiles,
@@ -118,17 +109,13 @@ export {
   useStartDictate,
   useStopDictate,
   useStyleOptions,
-  useStyleSet,
   useSubmitSendBox,
   useSuggestedActions,
-  useTextBoxSubmit,
-  useTextBoxValue,
   useTimeoutForSend,
   useTrackDimension,
   useTrackEvent,
   useTrackException,
   useTrackTiming,
-  useTypingIndicatorVisible,
   useUserID,
   useUsername,
   useVoiceSelector,

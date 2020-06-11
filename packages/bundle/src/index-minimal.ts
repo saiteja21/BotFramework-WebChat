@@ -1,15 +1,9 @@
 /* eslint dot-notation: ["error", { "allowPattern": "^WebChat$" }] */
 // window['WebChat'] is required for TypeScript
 
+import { Components, createStyleSet } from 'botframework-webchat-dom';
 import { Constants, createStore, version } from 'botframework-webchat-core';
-
-import ReactWebChat, {
-  Components,
-  concatMiddleware,
-  connectToWebChat,
-  createStyleSet,
-  hooks
-} from 'botframework-webchat-component';
+import ReactWebChat, { concatMiddleware, connectToWebChat, hooks } from 'botframework-webchat-component';
 
 import addVersion from './addVersion';
 import coreRenderWebChat from './renderWebChat';
