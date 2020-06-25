@@ -8,6 +8,7 @@
       https://github.com/microsoft/BotFramework-WebChat#how-to-test-with-web-chats-latest-bits
     -->
     <script src="https://github.com/compulim/BotFramework-WebChat/releases/download/dev-fix-a11y-post-4.9.1/webchat-es5.js"></script>
+    <script crossorigin="anonymous" src="https://unpkg.com/react@16.8.6/umd/react.production.min.js"></script>
     <!-- <script src="http://localhost:5000/webchat-es5.js"></script> -->
     <style>
       html,
@@ -113,14 +114,51 @@
 
       document.getElementById('version').innerHTML = 'Version: ' + versionMeta.getAttribute('content');
 
+      function createAttachmentMiddleware(store) {
+        return function () {
+          return function (next) {
+            return function (card) {
+              var attachment = card.attachment;
+              var activities = store.getState().activities;
+              var messageActivities = activities.filter(function (activity) {
+                return activity.type === 'message';
+              });
+              var recentBotMessage = messageActivities.pop() === card.activity;
+
+              switch (attachment.contentType) {
+                case 'application/vnd.microsoft.card.adaptive':
+                  return window.React.createElement(window.WebChat.Components.AdaptiveCardContent, {
+                    actionPerformedClassName: 'card__action--performed',
+                    content: attachment.content,
+                    disabled: !recentBotMessage
+                  });
+
+                case 'application/vnd.microsoft.card.hero':
+                  return window.React.createElement(window.WebChat.Components.HeroCardContent, {
+                    actionPerformedClassName: 'card__action--performed',
+                    content: attachment.content,
+                    disabled: !recentBotMessage
+                  });
+
+                default:
+                  return next(card);
+              }
+            };
+          };
+        };
+      }
+
       fetchCDCToken().then(function (token) {
+        const store = createStore(true);
+
         window.WebChat.renderWebChat(
           {
+            attachmentMiddleware: createAttachmentMiddleware(store),
             directLine: window.WebChat.createDirectLine({
               token: token
             }),
             locale: 'en-US',
-            store: createStore(true),
+            store: store,
             styleOptions: { hideSendBox: true }
           },
           document.getElementById('webchat')
