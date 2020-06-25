@@ -142,14 +142,16 @@ const BasicTranscriptContent = ({ animating, sticky }) => {
                 text
               } = activity;
 
+              const key = (activity.channelData && activity.channelData.clientActivityID) || activity.id || index;
+
               result = [
                 {
                   activity,
                   element,
-                  key: (activity.channelData && activity.channelData.clientActivityID) || activity.id || index,
+                  key,
 
                   // If this key change, the content of this attachment will be reannounced.
-                  liveRegionKey: messageBackDisplayText || text,
+                  liveRegionKey: key + '|' + (messageBackDisplayText || text),
 
                   // TODO: [P2] #2858 We should use core/definitions/speakingActivity for this predicate instead
                   shouldSpeak: activity.channelData && activity.channelData.speak
@@ -216,7 +218,6 @@ const BasicTranscriptContent = ({ animating, sticky }) => {
         aria-live="polite"
         aria-relevant="additions"
         aria-roledescription="transcript"
-        ref={liveRegionRef}
         role="log"
       >
         {activityElementsWithMetadata.map(({ activity, liveRegionKey }) => (
