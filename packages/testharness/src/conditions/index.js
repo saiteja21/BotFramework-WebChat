@@ -5,6 +5,7 @@ import connectivityStatusShown from './connectivityStatusShown';
 import minNumActivitiesShown from './minNumActivitiesShown';
 import negationOf from './negationOf';
 import newMessageButtonShown from './newMessageButtonShown';
+import numActivitiesShown from './numActivitiesShown';
 import scrollToBottomCompleted from './scrollToBottomCompleted';
 import suggestedActionsShown from './suggestedActionsShown';
 import toastShown from './toastShown';
@@ -19,6 +20,7 @@ export {
   minNumActivitiesShown,
   negationOf,
   newMessageButtonShown,
+  numActivitiesShown,
   scrollToBottomCompleted,
   suggestedActionsShown,
   toastShown,
