@@ -1,5 +1,6 @@
 /* global process:readonly */
 
+import addCustomChannelData from './actions/addCustomChannelData';
 import clearSuggestedActions from './actions/clearSuggestedActions';
 import connect from './actions/connect';
 import createStore from './createStore';
@@ -8,6 +9,7 @@ import dismissNotification from './actions/dismissNotification';
 import emitTypingIndicator from './actions/emitTypingIndicator';
 import markActivity from './actions/markActivity';
 import postActivity from './actions/postActivity';
+import removeCustomChannelData from './actions/removeCustomChannelData';
 import sendEvent from './actions/sendEvent';
 import sendFiles from './actions/sendFiles';
 import sendMessage from './actions/sendMessage';
@@ -33,6 +35,7 @@ const Constants = { ActivityClientState, DictateState };
 const version = process.env.npm_package_version;
 
 export {
+  addCustomChannelData,
   clearSuggestedActions,
   connect,
   Constants,
@@ -42,6 +45,7 @@ export {
   emitTypingIndicator,
   markActivity,
   postActivity,
+  removeCustomChannelData,
   sendEvent,
   sendFiles,
   sendMessage,

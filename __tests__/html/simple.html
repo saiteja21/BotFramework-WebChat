@@ -8,18 +8,15 @@
     <div id="webchat"></div>
     <script type="text/babel" data-presets="env,stage-3,react">
       const {
-        WebChat: { createDirectLine },
+        WebChat: { createDirectLine, renderWebChat },
         WebChatTest: { conditions, createStore, host, pageObjects, timeouts, token }
       } = window;
 
       (async function() {
-        window.WebChat.renderWebChat(
-          {
-            directLine: createDirectLine({ token: await token.fetchDirectLineToken() }),
-            store: createStore()
-          },
-          document.getElementById('webchat')
-        );
+        const directLine = await createDirectLine({ token: await token.fetchDirectLineToken() });
+        const store = createStore();
+
+        renderWebChat({ directLine, store }, document.getElementById('webchat'));
 
         await pageObjects.wait(conditions.uiConnected(), timeouts.directLine);
 

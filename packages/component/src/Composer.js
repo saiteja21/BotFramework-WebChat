@@ -23,6 +23,7 @@ import PrecompiledGlobalize from './Utils/PrecompiledGlobalize';
 import useReferenceGrammarID from './hooks/useReferenceGrammarID';
 
 import {
+  addCustomChannelData,
   clearSuggestedActions,
   connect as createConnectAction,
   createStore,
@@ -31,6 +32,7 @@ import {
   emitTypingIndicator,
   markActivity,
   postActivity,
+  removeCustomChannelData,
   sendEvent,
   sendFiles,
   sendMessage,
@@ -70,11 +72,13 @@ import {
 
 // List of Redux actions factory we are hoisting as Web Chat functions
 const DISPATCHERS = {
+  addCustomChannelData,
   clearSuggestedActions,
   dismissNotification,
   emitTypingIndicator,
   markActivity,
   postActivity,
+  removeCustomChannelData,
   sendEvent,
   sendFiles,
   sendMessage,
@@ -227,6 +231,7 @@ const Composer = ({
 }) => {
   const [dictateAbortable, setDictateAbortable] = useState();
   const [referenceGrammarID] = useReferenceGrammarID();
+  const channelDataRef = useRef({});
   const dispatch = useDispatch();
   const sendBoxFocusRef = useRef();
   const telemetryDimensionsRef = useRef({});
@@ -460,6 +465,7 @@ const Composer = ({
       activityStatusRenderer: patchedActivityStatusRenderer,
       attachmentRenderer: patchedAttachmentRenderer,
       avatarRenderer: patchedAvatarRenderer,
+      channelDataRef,
       dictateAbortable,
       dir: patchedDir,
       directLine,
@@ -490,6 +496,7 @@ const Composer = ({
     }),
     [
       cardActionContext,
+      channelDataRef,
       dictateAbortable,
       directLine,
       disabled,

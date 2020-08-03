@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 import activities from './reducers/activities';
 import clockSkewAdjustment from './reducers/clockSkewAdjustment';
 import connectivityStatus from './reducers/connectivityStatus';
+import customChannelData from './reducers/customChannelData';
 import dictateInterims from './reducers/dictateInterims';
 import dictateState from './reducers/dictateState';
 import language from './reducers/language';
@@ -21,6 +22,7 @@ export default combineReducers({
   activities,
   clockSkewAdjustment,
   connectivityStatus,
+  customChannelData,
   dictateInterims,
   dictateState,
   language,

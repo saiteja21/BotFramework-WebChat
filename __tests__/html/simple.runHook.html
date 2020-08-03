@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <script crossorigin="anonymous" src="/__dist__/testharness.js"></script>
+    <script crossorigin="anonymous" src="/__dist__/webchat-es5.js"></script>
+  </head>
+  <body>
+    <div id="webchat"></div>
+    <script type="text/babel" data-presets="env,stage-3,react">
+      const {
+        React: { useCallback },
+        ReactDOM: { render },
+        WebChat: {
+          Components: { Composer, BasicWebChat },
+          hooks: { useActivities, useSendMessage },
+          renderWebChat
+        },
+        WebChatTest: { conditions, createDeferred, createStore, expect, host, pageObjects, timeouts, token }
+      } = window;
+
+      function renderAsync(...args) {
+        return new Promise((resolve, reject) => render(...args, err => (err ? reject(err) : resolve())));
+      }
+
+      (async function() {
+        const directLine = await createDirectLine({ token: await token.fetchDirectLineToken() });
+        const store = createStore();
+
+        const RunFunction = ({ fn }) => {
+          fn && fn();
+
+          return false;
+        };
+
+        const renderWithHook = fn =>
+          new Promise((resolve, reject) =>
+            renderAsync(
+              <Composer directLine={directLine} store={store}>
+                <BasicWebChat />
+                <RunFunction fn={() => resolve(fn && fn())} key={Date.now()} />
+              </Composer>,
+              document.getElementById('webchat')
+            )
+          );
+
+        await renderWithHook();
+
+        await pageObjects.wait(conditions.uiConnected(), timeouts.directLine);
+
+        await renderWithHook(() => useSendMessage()('Hello, World!'));
+
+        await pageObjects.wait(conditions.numActivitiesShown(2), timeouts.directLine);
+
+        const [activities] = await renderWithHook(() => useActivities());
+
+        expect(activities).toHaveProperty('length', 2);
+
+        await host.snapshot();
+        await host.done();
+      })().catch(async err => {
+        console.error(err);
+
+        await host.error(err);
+      });
+    </script>
+  </body>
+</html>

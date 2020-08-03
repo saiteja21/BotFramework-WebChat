@@ -7,6 +7,7 @@ import useConnectivityStatus from './useConnectivityStatus';
 import useCreateActivityRenderer from './useCreateActivityRenderer';
 import useCreateActivityStatusRenderer from './useCreateActivityStatusRenderer';
 import useCreateAvatarRenderer from './useCreateAvatarRenderer';
+import useCustomChannelData from './useCustomChannelData';
 import useDateFormatter from './useDateFormatter';
 import useDebouncedNotifications from './useDebouncedNotifications';
 import useDictateInterims from './useDictateInterims';
@@ -81,6 +82,7 @@ export {
   useCreateActivityRenderer,
   useCreateActivityStatusRenderer,
   useCreateAvatarRenderer,
+  useCustomChannelData,
   useDateFormatter,
   useDebouncedNotifications,
   useDictateInterims,

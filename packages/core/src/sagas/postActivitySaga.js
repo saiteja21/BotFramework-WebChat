@@ -5,6 +5,7 @@ import whileConnected from './effects/whileConnected';
 
 import clockSkewAdjustmentSelector from '../selectors/clockSkewAdjustment';
 import combineSelectors from '../selectors/combineSelectors';
+import customChannelDataSelector from '../selectors/customChannelData';
 import languageSelector from '../selectors/language';
 import sendTimeoutSelector from '../selectors/sendTimeout';
 
@@ -21,16 +22,44 @@ import {
 
 import { INCOMING_ACTIVITY } from '../actions/incomingActivity';
 
+function fromEntries(entries) {
+  return entries.reduce((map, [name, value]) => {
+    map[name] = value;
+
+    return map;
+  }, {});
+}
+
 function getTimestamp(clockSkewAdjustment = 0) {
   return new Date(Date.now() + clockSkewAdjustment).toISOString();
 }
 
 function* postActivity(directLine, userID, username, numActivitiesPosted, { meta: { method }, payload: { activity } }) {
-  const { clockSkewAdjustment, locale } = yield select(
-    combineSelectors({ clockSkewAdjustment: clockSkewAdjustmentSelector, locale: languageSelector })
+  const { clockSkewAdjustment, customChannelData, locale } = yield select(
+    combineSelectors({
+      clockSkewAdjustment: clockSkewAdjustmentSelector,
+      customChannelData: customChannelDataSelector,
+      locale: languageSelector
+    })
   );
   const { attachments } = activity;
   const clientActivityID = uniqueID();
+
+  const flattenedCustomChannelData = fromEntries(
+    Object.entries(customChannelData)
+      .sort(([x], [y]) => (x > y ? 1 : x < y ? -1 : 0))
+      .map(([name, values]) => {
+        const { length } = values;
+
+        if (!values) {
+          return [name, undefined];
+        } else if (values.length > 1) {
+          return [name, values.sort()];
+        } else {
+          return [name, values[0]];
+        }
+      })
+  );
 
   activity = {
     ...deleteKey(activity, 'id'),
@@ -44,6 +73,7 @@ function* postActivity(directLine, userID, username, numActivitiesPosted, { meta
       })),
     channelData: {
       ...deleteKey(activity.channelData, 'state'),
+      ...flattenedCustomChannelData,
       clientActivityID,
       // This is unskewed local timestamp for estimating clock skew.
       clientTimestamp: getTimestamp()
