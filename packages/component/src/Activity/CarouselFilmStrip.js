@@ -1,6 +1,5 @@
 /* eslint complexity: ["error", 30] */
 
-import { css } from 'glamor';
 import { Context as FilmContext } from 'react-film';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -17,9 +16,10 @@ import useDirection from '../hooks/useDirection';
 import useLocalizer from '../hooks/useLocalizer';
 import useStyleOptions from '../hooks/useStyleOptions';
 import useStyleSet from '../hooks/useStyleSet';
+import useStyleToClassName from '../hooks/internal/useStyleToClassName';
 import useUniqueId from '../hooks/internal/useUniqueId';
 
-const ROOT_CSS = css({
+const ROOT_STYLE = {
   '&.webchat__carousel-layout': {
     display: 'flex',
     flexDirection: 'column',
@@ -96,7 +96,7 @@ const ROOT_CSS = css({
       display: 'flex'
     }
   }
-});
+};
 
 const connectCarouselFilmStrip = (...selectors) =>
   connectToWebChat(
@@ -133,6 +133,7 @@ const WebChatCarouselFilmStrip = ({
   const [direction] = useDirection();
   const ariaLabelId = useUniqueId('webchat__carousel-filmstrip__id');
   const localize = useLocalizer();
+  const rootCSS = useStyleToClassName()(ROOT_STYLE);
   const showActivityStatus = typeof renderActivityStatus === 'function';
 
   const {
@@ -172,7 +173,7 @@ const WebChatCarouselFilmStrip = ({
   return (
     <div
       aria-labelledby={ariaLabelId}
-      className={classNames('webchat__carousel-layout', ROOT_CSS + '', carouselFilmStripStyleSet + '', className + '', {
+      className={classNames('webchat__carousel-layout', rootCSS + '', carouselFilmStripStyleSet + '', className + '', {
         'webchat__carousel-layout--extra-trailing': extraTrailing,
         'webchat__carousel-layout--hide-avatar': hasAvatar && !showAvatar,
         'webchat__carousel-layout--hide-nub': hasNub && !showNub,

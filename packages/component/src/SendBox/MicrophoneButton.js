@@ -2,7 +2,6 @@
 /* eslint react/forbid-dom-props: "off" */
 
 import { Constants } from 'botframework-webchat-core';
-import { css } from 'glamor';
 import classNames from 'classnames';
 import memoize from 'memoize-one';
 import PropTypes from 'prop-types';
@@ -22,10 +21,11 @@ import useStartDictate from '../hooks/useStartDictate';
 import useStopDictate from '../hooks/useStopDictate';
 import useStyleSet from '../hooks/useStyleSet';
 import useWebSpeechPonyfill from '../hooks/useWebSpeechPonyfill';
+import useStyleToClassName from '../hooks/internal/useStyleToClassName';
 
 const { DictateState } = Constants;
 
-const ROOT_CSS = css({
+const ROOT_STYLE = {
   display: 'flex',
   height: '100%',
 
@@ -41,7 +41,7 @@ const ROOT_CSS = css({
     whiteSpace: 'nowrap',
     width: 1
   }
-});
+};
 
 const connectMicrophoneButton = (...selectors) => {
   const primeSpeechSynthesis = memoize((speechSynthesis, SpeechSynthesisUtterance) => {
@@ -152,13 +152,14 @@ const MicrophoneButton = ({ className }) => {
   const [disabled] = useMicrophoneButtonDisabled();
   const click = useMicrophoneButtonClick();
   const localize = useLocalizer();
+  const rootCSS = useStyleToClassName()(ROOT_STYLE);
 
   const dictating = dictateState === DictateState.DICTATING;
 
   return (
     <div
       aria-controls="webchatSendBoxMicrophoneButton"
-      className={classNames(microphoneButtonStyleSet + '', ROOT_CSS + '', className + '', { dictating })}
+      className={classNames(microphoneButtonStyleSet + '', rootCSS + '', className + '', { dictating })}
     >
       <IconButton alt={localize('TEXT_INPUT_SPEAK_BUTTON_ALT')} disabled={disabled} onClick={click}>
         <MicrophoneIcon />

@@ -1,8 +1,8 @@
 import { Composer as SayComposer } from 'react-say';
 import { Composer as ScrollToBottomComposer } from 'react-scroll-to-bottom';
 
-import { css } from 'glamor';
 import { Provider } from 'react-redux';
+import createEmotion from 'create-emotion';
 import MarkdownIt from 'markdown-it';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -92,7 +92,7 @@ const DISPATCHERS = {
   submitSendBox
 };
 
-function styleSetToClassNames(styleSet) {
+function styleSetToClassNames(css, styleSet) {
   return mapMap(styleSet, (style, key) => (key === 'options' ? style : css(style)));
 }
 
@@ -208,6 +208,7 @@ const Composer = ({
   groupActivitiesMiddleware,
   groupTimestamp,
   locale,
+  nonce,
   onTelemetry,
   overrideLocalizedStrings,
   renderMarkdown,
@@ -319,8 +320,18 @@ const Composer = ({
     transcriptFocusRef
   ]);
 
+  const styleToClassName = useMemo(() => {
+    const emotion = createEmotion({ nonce });
+
+    return emotion.css.bind(emotion);
+  }, [nonce]);
+
   const patchedStyleSet = useMemo(
-    () => styleSetToClassNames({ ...(styleSet || createStyleSet(patchedStyleOptions)), ...extraStyleSet }),
+    () =>
+      styleSetToClassNames(styleToClassName, {
+        ...(styleSet || createStyleSet(patchedStyleOptions, { nonce })),
+        ...extraStyleSet
+      }),
     [extraStyleSet, patchedStyleOptions, styleSet]
   );
 
@@ -481,6 +492,7 @@ const Composer = ({
       setDictateAbortable,
       styleOptions,
       styleSet: patchedStyleSet,
+      styleToClassName,
       suggestedActionsAccessKey,
       telemetryDimensionsRef,
       toastRenderer: patchedToastRenderer,
@@ -522,6 +534,7 @@ const Composer = ({
       sendTypingIndicator,
       setDictateAbortable,
       styleOptions,
+      styleToClassName,
       suggestedActionsAccessKey,
       telemetryDimensionsRef,
       trackDimension,
@@ -602,6 +615,7 @@ Composer.defaultProps = {
   groupActivitiesMiddleware: undefined,
   groupTimestamp: undefined,
   locale: window.navigator.language || 'en-US',
+  nonce: undefined,
   onTelemetry: undefined,
   overrideLocalizedStrings: undefined,
   renderMarkdown: undefined,
@@ -651,6 +665,7 @@ Composer.propTypes = {
   groupActivitiesMiddleware: PropTypes.func,
   groupTimestamp: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
   locale: PropTypes.string,
+  nonce: PropTypes.string,
   onTelemetry: PropTypes.func,
   overrideLocalizedStrings: PropTypes.oneOfType([PropTypes.any, PropTypes.func]),
   renderMarkdown: PropTypes.func,

@@ -1,19 +1,23 @@
 /* eslint no-magic-numbers: "off" */
 
-import { css } from 'glamor';
+import createEmotion from 'create-emotion';
 import { createBasicStyleSet } from 'react-film';
 
-export default function createSuggestedActionsStyleSet({
-  paddingRegular,
-  transcriptOverlayButtonBackground,
-  transcriptOverlayButtonBackgroundOnDisabled,
-  transcriptOverlayButtonBackgroundOnFocus,
-  transcriptOverlayButtonBackgroundOnHover,
-  transcriptOverlayButtonColor,
-  transcriptOverlayButtonColorOnDisabled,
-  transcriptOverlayButtonColorOnFocus,
-  transcriptOverlayButtonColorOnHover
-}) {
+export default function createSuggestedActionsStyleSet(
+  {
+    paddingRegular,
+    transcriptOverlayButtonBackground,
+    transcriptOverlayButtonBackgroundOnDisabled,
+    transcriptOverlayButtonBackgroundOnFocus,
+    transcriptOverlayButtonBackgroundOnHover,
+    transcriptOverlayButtonColor,
+    transcriptOverlayButtonColorOnDisabled,
+    transcriptOverlayButtonColorOnFocus,
+    transcriptOverlayButtonColorOnHover
+  },
+  { nonce }
+) {
+  const { css } = createEmotion({ nonce });
   const originalStyleSet = createBasicStyleSet({
     cursor: null,
     flipperBoxWidth: 40,

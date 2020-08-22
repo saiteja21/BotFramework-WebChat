@@ -64,7 +64,7 @@ function parseBorder(border) {
 
 const PIXEL_UNIT_PATTERN = /^\d+px$/u;
 
-export default function createStyleSet(options) {
+export default function createStyleSet(options, { nonce } = {}) {
   options = { ...defaultStyleOptions, ...options };
 
   // Keep this list flat (no nested style) and serializable (no functions)
@@ -223,7 +223,7 @@ export default function createStyleSet(options) {
     microphoneButton: createMicrophoneButtonStyle(options),
     options: {
       ...options,
-      suggestedActionsStyleSet: createSuggestedActionsStyleSet(options)
+      suggestedActionsStyleSet: createSuggestedActionsStyleSet(options, { nonce })
     },
     root: createRootStyle(options),
     scrollToEndButton: createScrollToEndButtonStyle(options),

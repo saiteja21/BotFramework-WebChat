@@ -1,6 +1,5 @@
 import { Composer, Context as FilmContext, createBasicStyleSet, Flipper } from 'react-film';
 
-import { css } from 'glamor';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
@@ -9,11 +8,12 @@ import CarouselFilmStrip from './CarouselFilmStrip';
 import useDirection from '../hooks/useDirection';
 import useLocalizer from '../hooks/useLocalizer';
 import useStyleSet from '../hooks/useStyleSet';
+import useStyleToClassName from '../hooks/internal/useStyleToClassName';
 
-const ROOT_CSS = css({
+const ROOT_STYLE = {
   overflow: 'hidden',
   position: 'relative'
-});
+};
 
 const CarouselLayout = ({
   activity,
@@ -30,12 +30,13 @@ const CarouselLayout = ({
   const leftSideFlipper = direction === 'rtl' ? '>' : '<';
   const localize = useLocalizer();
   const rightSideFlipper = direction === 'rtl' ? '<' : '>';
+  const rootCSS = useStyleToClassName()(ROOT_STYLE);
 
   return (
     <Composer dir={direction} numItems={React.Children.count(children)}>
       <FilmContext.Consumer>
         {({ scrollBarWidth }) => (
-          <div className={classNames(ROOT_CSS + '', filmStyleSet.carousel + '')}>
+          <div className={classNames(rootCSS + '', filmStyleSet.carousel + '')}>
             <CarouselFilmStrip
               activity={activity}
               hideTimestamp={hideTimestamp}

@@ -1,6 +1,5 @@
 /* eslint react/no-array-index-key: "off" */
 
-import { css } from 'glamor';
 import BasicFilm from 'react-film';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -14,13 +13,14 @@ import useLocalizeAccessKey from '../hooks/internal/useLocalizeAccessKey';
 import useLocalizer from '../hooks/useLocalizer';
 import useStyleOptions from '../hooks/useStyleOptions';
 import useStyleSet from '../hooks/useStyleSet';
+import useStyleToClassName from '../hooks/internal/useStyleToClassName';
 import useSuggestedActionsAccessKey from '../hooks/internal/useSuggestedActionsAccessKey';
 import useUniqueId from '../hooks/internal/useUniqueId';
 
-const SUGGESTED_ACTION_STACKED_CSS = css({
+const SUGGESTED_ACTION_STACKED_STYLE = {
   display: 'flex',
   flexDirection: 'column'
-});
+};
 
 function suggestedActionText({ displayText, title, type, value }) {
   if (type === 'messageBack') {
@@ -51,6 +51,7 @@ const SuggestedActions = ({ className, suggestedActions = [] }) => {
   const ariaLabelId = useUniqueId('webchat__suggested-actions');
   const localize = useLocalizer();
   const localizeAccessKey = useLocalizeAccessKey();
+  const suggestedActionStackedCSS = useStyleToClassName()(SUGGESTED_ACTION_STACKED_STYLE);
 
   const suggestedActionsContainerText = localize(
     'SUGGESTED_ACTIONS_ALT',
@@ -87,7 +88,7 @@ const SuggestedActions = ({ className, suggestedActions = [] }) => {
     return (
       <div aria-labelledby={ariaLabelId} aria-live="polite" role="status">
         <ScreenReaderText id={ariaLabelId} text={suggestedActionsContainerText} />
-        <div className={classNames(suggestedActionsStyleSet + '', SUGGESTED_ACTION_STACKED_CSS + '', className + '')}>
+        <div className={classNames(suggestedActionsStyleSet + '', suggestedActionStackedCSS + '', className + '')}>
           {children}
         </div>
       </div>

@@ -1,5 +1,4 @@
 import { Constants } from 'botframework-webchat-core';
-import { css } from 'glamor';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -11,25 +10,36 @@ import SuggestedActions from './SendBox/SuggestedActions';
 import TextBox from './SendBox/TextBox';
 import UploadButton from './SendBox/UploadButton';
 import useActivities from './hooks/useActivities';
-import useDirection from './hooks/useDirection';
 import useDictateState from './hooks/useDictateState';
+import useDirection from './hooks/useDirection';
 import useStyleOptions from './hooks/useStyleOptions';
 import useStyleSet from './hooks/useStyleSet';
+import useStyleToClassName from './hooks/internal/useStyleToClassName';
 import useWebSpeechPonyfill from './hooks/useWebSpeechPonyfill';
 
 const {
   DictateState: { DICTATING, STARTING }
 } = Constants;
 
-const ROOT_CSS = css({
-  '& > .main': {
-    display: 'flex'
-  }
-});
+const ROOT_STYLE = {
+  '&.webchat__basic-send-box': {
+    '& .webchat__basic-send-box__main': {
+      display: 'flex'
+    },
 
-const DICTATION_INTERIMS_CSS = css({ flex: 10000 });
-const MICROPHONE_BUTTON_CSS = css({ flex: 1 });
-const TEXT_BOX_CSS = css({ flex: 10000 });
+    '& .webchat__basic-send-box__dictation-interims': {
+      flex: 10000
+    },
+
+    '& .webchat__basic-send-box__microphone-button': {
+      flex: 1
+    },
+
+    '& .webchat__basic-send-box__text-box': {
+      flex: 10000
+    }
+  }
+};
 
 // TODO: [P3] We should consider exposing core/src/definitions and use it instead
 function activityIsSpeakingOrQueuedToSpeak({ channelData: { speak } = {} }) {
@@ -52,21 +62,30 @@ const BasicSendBox = ({ className }) => {
   const [{ SpeechRecognition } = {}] = useWebSpeechPonyfill();
   const [direction] = useDirection();
   const [speechInterimsVisible] = useSendBoxSpeechInterimsVisible();
+  const rootCSS = useStyleToClassName()(ROOT_STYLE);
 
   const supportSpeechRecognition = !!SpeechRecognition;
 
   return (
-    <div className={classNames(sendBoxStyleSet + '', ROOT_CSS + '', className + '')} dir={direction} role="form">
+    <div
+      className={classNames('webchat__basic-send-box', rootCSS + '', sendBoxStyleSet + '', className + '')}
+      dir={direction}
+      role="form"
+    >
       <SuggestedActions />
-      <div className="main">
+      <div className="webchat__basic-send-box__main">
         {!hideUploadButton && <UploadButton />}
         {speechInterimsVisible ? (
-          <DictationInterims className={DICTATION_INTERIMS_CSS + ''} />
+          <DictationInterims className="webchat__basic-send-box__dictation-interims" />
         ) : (
-          <TextBox className={TEXT_BOX_CSS + ''} />
+          <TextBox className="webchat__basic-send-box__text-box" />
         )}
         <div>
-          {supportSpeechRecognition ? <MicrophoneButton className={MICROPHONE_BUTTON_CSS + ''} /> : <SendButton />}
+          {supportSpeechRecognition ? (
+            <MicrophoneButton className="webchat__basic-send-box__microphone-button" />
+          ) : (
+            <SendButton />
+          )}
         </div>
       </div>
     </div>

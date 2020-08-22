@@ -1,7 +1,6 @@
 /* eslint no-magic-numbers: ["error", { "ignore": [0, 1, 2] }] */
 /* eslint react/no-unsafe: off */
 
-import { css } from 'glamor';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -16,35 +15,38 @@ import useDisabled from './hooks/useDisabled';
 import useSendBoxFocusRef from './hooks/internal/useSendBoxFocusRef';
 import useStyleOptions from './hooks/useStyleOptions';
 import useStyleSet from './hooks/useStyleSet';
+import useStyleToClassName from './hooks/internal/useStyleToClassName';
 import useTranscriptFocusRef from './hooks/internal/useTranscriptFocusRef';
 
-const ROOT_CSS = css({
-  display: 'flex',
-  flexDirection: 'column'
-});
+const ROOT_STYLE = {
+  '&.webchat__basic-web-chat': {
+    display: 'flex',
+    flexDirection: 'column',
 
-const SINK_CSS = css({
-  display: 'flex',
-  flex: 1,
-  flexDirection: 'column',
-  overflow: 'hidden'
-});
+    '& .webchat__basic-web-chat__connectivity-status': {
+      flexShrink: 0
+    },
 
-const CONNECTIVITY_STATUS_CSS = css({
-  flexShrink: 0
-});
+    '& .webchat__basic-web-chat__send-box': {
+      flexShrink: 0
+    },
 
-const SEND_BOX_CSS = css({
-  flexShrink: 0
-});
+    '& .webchat__basic-web-chat__toaster': {
+      flexShrink: 0
+    },
 
-const TOASTER_CSS = css({
-  flexShrink: 0
-});
+    '& .webchat__basic-web-chat__transcript': {
+      flex: 1
+    },
 
-const TRANSCRIPT_CSS = css({
-  flex: 1
-});
+    '& .webchat__basic-web-chat__type-focus-sink': {
+      display: 'flex',
+      flex: 1,
+      flexDirection: 'column',
+      overflow: 'hidden'
+    }
+  }
+};
 
 const BasicWebChat = ({ className }) => {
   const [{ root: rootStyleSet }] = useStyleSet();
@@ -52,20 +54,23 @@ const BasicWebChat = ({ className }) => {
   const [options] = useStyleOptions();
   const [sendBoxFocusRef] = useSendBoxFocusRef();
   const [transcriptFocusRef] = useTranscriptFocusRef();
+  const rootCSS = useStyleToClassName()(ROOT_STYLE);
 
   return (
-    <AccessKeySinkSurface className={classNames(ROOT_CSS + '', rootStyleSet + '', className + '')}>
+    <AccessKeySinkSurface
+      className={classNames('webchat__basic-web-chat', rootCSS + '', rootStyleSet + '', className + '')}
+    >
       <TypeFocusSinkBox
-        className={SINK_CSS + ''}
+        className="webchat__basic-web-chat__type-focus-sink"
         disabled={disabled}
         ref={transcriptFocusRef}
         role="complementary"
         sendFocusRef={sendBoxFocusRef}
       >
-        {!options.hideToaster && <BasicToaster className={TOASTER_CSS + ''} />}
-        <BasicTranscript className={TRANSCRIPT_CSS + ''} />
-        <BasicConnectivityStatus className={CONNECTIVITY_STATUS_CSS + ''} />
-        {!options.hideSendBox && <BasicSendBox className={SEND_BOX_CSS + ''} />}
+        {!options.hideToaster && <BasicToaster className="webchat__basic-web-chat__toaster" />}
+        <BasicTranscript className="webchat__basic-web-chat__transcript" />
+        <BasicConnectivityStatus className="webchat__basic-web-chat__connectivity-status" />
+        {!options.hideSendBox && <BasicSendBox className="webchat__basic-web-chat__send-box" />}
       </TypeFocusSinkBox>
     </AccessKeySinkSurface>
   );

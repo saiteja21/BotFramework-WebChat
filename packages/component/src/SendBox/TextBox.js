@@ -1,4 +1,3 @@
-import { css } from 'glamor';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
@@ -16,9 +15,10 @@ import useSendBoxValue from '../hooks/useSendBoxValue';
 import useStopDictate from '../hooks/useStopDictate';
 import useStyleOptions from '../hooks/useStyleOptions';
 import useStyleSet from '../hooks/useStyleSet';
+import useStyleToClassName from '../hooks/internal/useStyleToClassName';
 import useSubmitSendBox from '../hooks/useSubmitSendBox';
 
-const ROOT_CSS = css({
+const ROOT_STYLE = {
   '&.webchat__send-box-text-box': {
     display: 'flex',
 
@@ -26,7 +26,7 @@ const ROOT_CSS = css({
       flex: 1
     }
   }
-});
+};
 
 const connectSendTextBox = (...selectors) =>
   connectToWebChat(
@@ -150,6 +150,7 @@ const TextBoxCore = forwardRef(({ className }, forwardedRef) => {
   const localize = useLocalizer();
   const placeCheckpointOnChangeRef = useRef(false);
   const prevInputStateRef = useRef();
+  const rootCSS = useStyleToClassName()(ROOT_STYLE);
   const submitTextBox = useTextBoxSubmit();
   const undoStackRef = useRef([]);
 
@@ -298,10 +299,10 @@ const TextBoxCore = forwardRef(({ className }, forwardedRef) => {
     <form
       aria-disabled={disabled}
       className={classNames(
-        ROOT_CSS + '',
+        'webchat__send-box-text-box',
+        rootCSS + '',
         sendBoxTextAreaStyleSet + '',
         sendBoxTextBoxStyleSet + '',
-        'webchat__send-box-text-box',
         className + ''
       )}
       onSubmit={disabled ? PREVENT_DEFAULT_HANDLER : handleSubmit}

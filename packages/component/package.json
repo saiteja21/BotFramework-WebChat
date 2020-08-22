@@ -55,6 +55,7 @@
   "dependencies": {
     "botframework-webchat-core": "0.0.0-0",
     "classnames": "2.2.6",
+    "create-emotion": "10.0.27",
     "event-target-shim": "5.0.1",
     "event-target-shim-es5": "1.2.0",
     "glamor": "2.20.40",

@@ -1,7 +1,6 @@
 /* eslint no-magic-numbers: ["error", { "ignore": [0, 1, 2, 3, 4, 5] }] */
 /* eslint react/forbid-dom-props: "off" */
 
-import { css } from 'glamor';
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -13,8 +12,9 @@ import useDebouncedNotifications from './hooks/useDebouncedNotifications';
 import useLocalizer from './hooks/useLocalizer';
 import useRenderToast from './hooks/useRenderToast';
 import useStyleSet from './hooks/useStyleSet';
+import useStyleToClassName from './hooks/internal/useStyleToClassName';
 
-const ROOT_CSS = css({
+const ROOT_STYLE = {
   display: 'flex',
   flexDirection: 'column',
 
@@ -31,7 +31,7 @@ const ROOT_CSS = css({
     display: 'block',
     listStyleType: 'none'
   }
-});
+};
 
 const LEVEL_AS_NUMBER = {
   error: 1,
@@ -71,6 +71,7 @@ const BasicToaster = () => {
   const [expanded, setExpanded] = useState(false);
   const localizeWithPlural = useLocalizer({ plural: true });
   const renderToast = useRenderToast();
+  const rootCSS = useStyleToClassName()(ROOT_STYLE);
 
   const handleToggleExpand = useCallback(() => setExpanded(!expanded), [expanded, setExpanded]);
   const sortedNotifications = useMemo(() => sortNotifications(debouncedNotifications), [debouncedNotifications]);
@@ -107,7 +108,7 @@ const BasicToaster = () => {
       aria-labelledby={headerElementId}
       aria-live="polite"
       aria-relevant="all"
-      className={classNames(ROOT_CSS + '', toasterStyleSet + '', 'webchat__toaster', {
+      className={classNames('webchat__toaster', rootCSS + '', toasterStyleSet + '', {
         'webchat__toaster--expandable': expandable,
         'webchat__toaster--expanded': expanded,
         'webchat__toaster--error': highestLevel === 'error',
