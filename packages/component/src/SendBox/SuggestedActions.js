@@ -16,11 +16,11 @@ import useStyleToEmotionObject from '../hooks/internal/useStyleToEmotionObject';
 import useSuggestedActionsAccessKey from '../hooks/internal/useSuggestedActionsAccessKey';
 import useUniqueId from '../hooks/internal/useUniqueId';
 
-const { useDirection, useLocalizer, useStyleOptions } = hooks;
+const { useDirection, useLocalizer, useStyleOptions, useSuggestedActions } = hooks;
 
 const ROOT_STYLE = {
   '&.webchat__suggested-actions': {
-    '&.webchat__suggested-actions--flow-layout': {
+    '&.webchat__suggested-actions--flow-layout, &.webchat__suggested-actions--inline-flow-layout': {
       display: 'flex',
       flexWrap: 'wrap'
     },
@@ -128,6 +128,7 @@ SuggestedActionCarouselContainer.propTypes = {
 };
 
 const SuggestedActionFlowContainer = ({ children, className, screenReaderText }) => {
+  const [{ suggestedActionLayout }] = useStyleOptions();
   const [{ suggestedActions: suggestedActionsStyleSet }] = useStyleSet();
   const ariaLabelId = useUniqueId('webchat__suggested-actions');
   const rootClassName = useStyleToEmotionObject()(ROOT_STYLE) + '';
@@ -138,7 +139,10 @@ const SuggestedActionFlowContainer = ({ children, className, screenReaderText })
       aria-live="polite"
       className={classNames(
         'webchat__suggested-actions',
-        'webchat__suggested-actions--flow-layout',
+        {
+          'webchat__suggested-actions--flow-layout': suggestedActionLayout === 'flow',
+          'webchat__suggested-actions--inline-flow-layout': suggestedActionLayout === 'inline flow'
+        },
         rootClassName,
         suggestedActionsStyleSet + '',
         (className || '') + ''
@@ -165,6 +169,7 @@ SuggestedActionFlowContainer.propTypes = {
 };
 
 const SuggestedActionStackedContainer = ({ children, className, screenReaderText }) => {
+  const [{ suggestedActionLayout }] = useStyleOptions();
   const [{ suggestedActions: suggestedActionsStyleSet }] = useStyleSet();
   const ariaLabelId = useUniqueId('webchat__suggested-actions');
   const rootClassName = useStyleToEmotionObject()(ROOT_STYLE) + '';
@@ -175,7 +180,10 @@ const SuggestedActionStackedContainer = ({ children, className, screenReaderText
       aria-live="polite"
       className={classNames(
         'webchat__suggested-actions',
-        'webchat__suggested-actions--stacked-layout',
+        {
+          'webchat__suggested-actions--stacked-layout': suggestedActionLayout === 'stacked',
+          'webchat__suggested-actions--inline-stacked-layout': suggestedActionLayout === 'inline stacked'
+        },
         rootClassName,
         suggestedActionsStyleSet + '',
         (className || '') + ''
@@ -201,11 +209,21 @@ SuggestedActionStackedContainer.propTypes = {
   screenReaderText: PropTypes.string.isRequired
 };
 
-const SuggestedActions = ({ className, suggestedActions = [] }) => {
+const SuggestedActions = ({ className, disabled, suggestedActions }) => {
   const [{ suggestedActionLayout }] = useStyleOptions();
   const [accessKey] = useSuggestedActionsAccessKey();
+  const [suggestedActionsFromHooks] = useSuggestedActions();
   const localize = useLocalizer();
   const localizeAccessKey = useLocalizeAccessKey();
+
+  if (!suggestedActions) {
+    // TODO: [P0] Fill the link
+    console.warn(
+      'botframework-webchat: <SuggestedActions> now requires passing a "suggestedActions" prop. Please see this link for details, https://.../.'
+    );
+
+    suggestedActions = suggestedActionsFromHooks;
+  }
 
   const screenReaderText = localize(
     'SUGGESTED_ACTIONS_ALT',
@@ -221,6 +239,7 @@ const SuggestedActions = ({ className, suggestedActions = [] }) => {
       ariaHidden={true}
       buttonText={suggestedActionText({ displayText, title, type, value })}
       className="webchat__suggested-actions__button"
+      disabled={disabled}
       displayText={displayText}
       image={image}
       imageAlt={imageAltText}
@@ -231,13 +250,13 @@ const SuggestedActions = ({ className, suggestedActions = [] }) => {
     />
   ));
 
-  if (suggestedActionLayout === 'flow') {
+  if (suggestedActionLayout === 'flow' || suggestedActionLayout === 'inline flow') {
     return (
       <SuggestedActionFlowContainer className={className} screenReaderText={screenReaderText}>
         {children}
       </SuggestedActionFlowContainer>
     );
-  } else if (suggestedActionLayout === 'stacked') {
+  } else if (suggestedActionLayout === 'stacked' || suggestedActionLayout === 'inline stacked') {
     return (
       <SuggestedActionStackedContainer className={className} screenReaderText={screenReaderText}>
         {children}
@@ -253,11 +272,13 @@ const SuggestedActions = ({ className, suggestedActions = [] }) => {
 };
 
 SuggestedActions.defaultProps = {
-  className: ''
+  className: '',
+  disabled: false
 };
 
 SuggestedActions.propTypes = {
   className: PropTypes.string,
+  disabled: PropTypes.bool,
   suggestedActions: PropTypes.arrayOf(
     PropTypes.shape({
       displayText: PropTypes.string,
@@ -271,6 +292,6 @@ SuggestedActions.propTypes = {
   ).isRequired
 };
 
-export default connectSuggestedActions()(SuggestedActions);
+export default SuggestedActions;
 
 export { connectSuggestedActions };

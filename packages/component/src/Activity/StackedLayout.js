@@ -9,6 +9,7 @@ import Bubble from './Bubble';
 import connectToWebChat from '../connectToWebChat';
 import isZeroOrPositive from '../Utils/isZeroOrPositive';
 import ScreenReaderText from '../ScreenReaderText';
+import SuggestedActions from '../SendBox/SuggestedActions';
 import textFormatToContentType from '../Utils/textFormatToContentType';
 import useStyleSet from '../hooks/useStyleSet';
 import useStyleToEmotionObject from '../hooks/internal/useStyleToEmotionObject';
@@ -91,7 +92,9 @@ const StackedLayout = ({
   renderActivityStatus,
   renderAttachment,
   renderAvatar,
-  showCallout
+  showCallout,
+  showSuggestedActions,
+  suggestedActionsDisabled
 }) => {
   const [{ bubbleNubOffset, bubbleNubSize, bubbleFromUserNubOffset, bubbleFromUserNubSize }] = useStyleOptions();
   const [{ initials: botInitials }] = useAvatarForBot();
@@ -203,6 +206,12 @@ const StackedLayout = ({
               </Bubble>
             </div>
           ))}
+          {!!showSuggestedActions && (
+            <SuggestedActions
+              disabled={suggestedActionsDisabled}
+              suggestedActions={activity.suggestedActions.actions}
+            />
+          )}
         </div>
         <div className="webchat__stacked-layout__alignment-pad" />
       </div>

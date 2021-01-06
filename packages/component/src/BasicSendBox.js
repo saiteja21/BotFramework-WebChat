@@ -4,10 +4,10 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import BasicSuggestedActions from './BasicSuggestedActions';
 import DictationInterims from './SendBox/DictationInterims';
 import MicrophoneButton from './SendBox/MicrophoneButton';
 import SendButton from './SendBox/SendButton';
-import SuggestedActions from './SendBox/SuggestedActions';
 import TextBox from './SendBox/TextBox';
 import UploadButton from './SendBox/UploadButton';
 import useStyleSet from './hooks/useStyleSet';
@@ -46,7 +46,7 @@ function useSendBoxSpeechInterimsVisible() {
 }
 
 const BasicSendBox = ({ className }) => {
-  const [{ hideUploadButton }] = useStyleOptions();
+  const [{ hideUploadButton, suggestedActionLayout }] = useStyleOptions();
   const [{ sendBox: sendBoxStyleSet }] = useStyleSet();
   const [{ SpeechRecognition } = {}] = useWebSpeechPonyfill();
   const [direction] = useDirection();
@@ -66,7 +66,7 @@ const BasicSendBox = ({ className }) => {
       dir={direction}
       role="form"
     >
-      <SuggestedActions />
+      {!/^inline\s/iu.test(suggestedActionLayout) && <BasicSuggestedActions />}
       <div className="main">
         {!hideUploadButton && <UploadButton />}
         {speechInterimsVisible ? (

@@ -70,12 +70,12 @@ export default function createSuggestedActionsStyle({
         }
       },
 
-      '&.webchat__suggested-actions--flow-layout': {
+      '&.webchat__suggested-actions--flow-layout, &.webchat__suggested-actions--inline-flow-layout': {
         maxHeight: suggestedActionsFlowMaxHeight,
         overflowY: 'auto',
+        marginLeft: -paddingRegular / 2,
+        marginRight: -paddingRegular / 2,
         paddingBottom: paddingRegular / 2,
-        paddingLeft: paddingRegular / 2,
-        paddingRight: paddingRegular / 2,
         paddingTop: paddingRegular / 2,
 
         '& .webchat__suggested-actions__item': {
@@ -84,25 +84,43 @@ export default function createSuggestedActionsStyle({
         },
 
         '& .webchat__suggested-actions__button': {
-          padding: paddingRegular / 2
+          paddingBottom: paddingRegular / 2,
+          paddingLeft: paddingRegular / 2,
+          paddingRight: paddingRegular / 2,
+          paddingTop: paddingRegular / 2
         }
       },
 
-      '&.webchat__suggested-actions--stacked-layout': {
+      '&.webchat__suggested-actions--inline-flow-layout': {
+        '& .webchat__suggested-actions__button': {
+          paddingBottom: paddingRegular / 2,
+          paddingTop: paddingRegular / 2
+        }
+      },
+
+      '&.webchat__suggested-actions--stacked-layout, &.webchat__suggested-actions--inline-stacked-layout': {
         '& .webchat__suggested-actions__stack': {
           maxHeight: suggestedActionsStackedHeight || 'auto',
           overflowY: suggestedActionsStackedOverflow || 'auto',
           paddingBottom: paddingRegular / 2,
-          paddingLeft: paddingRegular / 2,
-          paddingRight: paddingRegular / 2,
           paddingTop: paddingRegular / 2
         },
 
         '& .webchat__suggested-actions__button': {
           paddingBottom: paddingRegular / 2,
-          paddingLeft: paddingRegular / 2,
-          paddingRight: paddingRegular / 2,
           paddingTop: paddingRegular / 2
+        }
+      },
+
+      '&.webchat__suggested-actions--stacked-layout': {
+        '& .webchat__suggested-actions__stack': {
+          paddingLeft: paddingRegular / 2,
+          paddingRight: paddingRegular / 2
+        },
+
+        '& .webchat__suggested-actions__button': {
+          paddingLeft: paddingRegular / 2,
+          paddingRight: paddingRegular / 2
         }
       }
     }

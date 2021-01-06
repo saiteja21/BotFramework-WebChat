@@ -131,6 +131,8 @@
         carousel: { suggestedActionLayout: 'carousel' },
         flow: { suggestedActionLayout: 'flow' },
         'flow-maxheight': { suggestedActionLayout: 'flow', suggestedActionsFlowMaxHeight: 120 },
+        'inline-flow': { suggestedActionLayout: 'inline flow' },
+        'inline-stacked': { suggestedActionLayout: 'inline stacked' },
         stacked: { suggestedActionLayout: 'stacked' },
         'stacked-maxheight': { suggestedActionLayout: 'stacked', suggestedActionsStackedHeight: 120 }
       };
@@ -188,6 +190,18 @@
                   onChange={handlePresetChange}
                   label="Stacked with maxHeight"
                   value="stacked-maxheight"
+                />
+                <RadioRow
+                  checked={preset === 'inline-flow'}
+                  onChange={handlePresetChange}
+                  label="Inline flow"
+                  value="inline-flow"
+                />
+                <RadioRow
+                  checked={preset === 'inline-stacked'}
+                  onChange={handlePresetChange}
+                  label="Inline Stacked"
+                  value="inline-stacked"
                 />
                 <hr />
                 <div className="test-harness__form-row">

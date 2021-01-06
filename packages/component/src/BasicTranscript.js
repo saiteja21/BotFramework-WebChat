@@ -78,7 +78,14 @@ function validateAllActivitiesTagged(activities, bins) {
 const BasicTranscript = ({ className }) => {
   const [{ activity: activityStyleSet }] = useStyleSet();
   const [
-    { bubbleFromUserNubOffset, bubbleNubOffset, groupTimestamp, internalLiveRegionFadeAfter, showAvatarInGroup }
+    {
+      bubbleFromUserNubOffset,
+      bubbleNubOffset,
+      groupTimestamp,
+      internalLiveRegionFadeAfter,
+      showAvatarInGroup,
+      suggestedActionLayout
+    }
   ] = useStyleOptions();
   const [activities] = useActivities();
   const [activityElementsRef] = useTranscriptActivityElementsRef();
@@ -353,32 +360,46 @@ const BasicTranscript = ({ className }) => {
       </section>
       <InternalTranscriptScrollable activities={renderingActivities}>
         {renderingElements.map(
-          ({
-            activity,
-            callbackRef,
-            key,
-            hideTimestamp,
-            renderActivity,
-            renderActivityStatus,
-            renderAvatar,
-            shouldSpeak,
-            showCallout
-          }) => (
-            <li
-              aria-label={activityAriaLabel} // This will be read when pressing CAPSLOCK + arrow with screen reader
-              className={classNames(activityStyleSet + '', 'webchat__basic-transcript__activity')}
-              key={key}
-              ref={callbackRef}
-            >
-              {renderActivity({
-                hideTimestamp,
-                renderActivityStatus,
-                renderAvatar,
-                showCallout
-              })}
-              {shouldSpeak && <SpeakActivity activity={activity} />}
-            </li>
-          )
+          (
+            {
+              activity,
+              callbackRef,
+              key,
+              hideTimestamp,
+              renderActivity,
+              renderActivityStatus,
+              renderAvatar,
+              shouldSpeak,
+              showCallout
+            },
+            index
+          ) => {
+            const lastActivity = index + 1 === renderingElements.length;
+            const showSuggestedActions =
+              /^inline\s/iu.test(suggestedActionLayout) &&
+              activity.suggestedActions &&
+              activity.suggestedActions.actions &&
+              activity.suggestedActions.actions.length;
+
+            return (
+              <li
+                aria-label={activityAriaLabel} // This will be read when pressing CAPSLOCK + arrow with screen reader
+                className={classNames(activityStyleSet + '', 'webchat__basic-transcript__activity')}
+                key={key}
+                ref={callbackRef}
+              >
+                {renderActivity({
+                  hideTimestamp,
+                  renderActivityStatus,
+                  renderAvatar,
+                  showCallout,
+                  showSuggestedActions,
+                  suggestedActionsDisabled: !lastActivity
+                })}
+                {shouldSpeak && <SpeakActivity activity={activity} />}
+              </li>
+            );
+          }
         )}
       </InternalTranscriptScrollable>
     </div>

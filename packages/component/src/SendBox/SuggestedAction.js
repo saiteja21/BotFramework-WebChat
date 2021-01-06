@@ -41,6 +41,7 @@ const SuggestedAction = ({
   'aria-hidden': ariaHidden,
   buttonText,
   className,
+  disabled: disabledFromProps,
   displayText,
   image,
   imageAlt,
@@ -52,13 +53,15 @@ const SuggestedAction = ({
   const [{ suggestedAction: suggestedActionStyleSet }] = useStyleSet();
   const [accessKey] = useSuggestedActionsAccessKey();
   const [direction] = useDirection();
-  const [disabled] = useDisabled();
+  const [globalDisabled] = useDisabled();
   const focus = useFocus();
   const focusRef = useRef();
   const localizeAccessKey = useLocalizeAccessKey();
   const performCardAction = usePerformCardAction();
   const scrollToEnd = useScrollToEnd();
   const rootClassName = useStyleToEmotionObject()(ROOT_STYLE) + '';
+
+  const disabled = disabledFromProps || globalDisabled;
 
   const handleClick = useCallback(
     ({ target }) => {
@@ -113,6 +116,7 @@ const SuggestedAction = ({
 SuggestedAction.defaultProps = {
   'aria-hidden': false,
   className: '',
+  disabled: false,
   displayText: '',
   image: '',
   imageAlt: undefined,
@@ -125,6 +129,7 @@ SuggestedAction.propTypes = {
   'aria-hidden': PropTypes.bool,
   buttonText: PropTypes.string.isRequired,
   className: PropTypes.string,
+  disabled: PropTypes.bool,
   displayText: PropTypes.string,
   image: PropTypes.string,
   imageAlt: PropTypes.string,
